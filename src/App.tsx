@@ -8,9 +8,7 @@ function App() {
           В разработке
         </span>
         <p className="text-lg text-slate-300 mb-10 leading-relaxed">
-          Приложение для ручного учёта личных финансов.
-          Скоро здесь появится удобный инструмент для контроля бюджета,
-          транзакций и финансового планирования.
+          Приложение для ручного учёта личных финансов. Удобный инструмент для контроля бюджета, транзакций и финансового планирования.
         </p>
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 text-left border border-white/10">
           <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Технологии</h2>
@@ -34,7 +32,7 @@ function App() {
               GitHub
             </a>
             <span className="text-xs text-slate-500">
-              Разработчик: <a href="https://vitalik.dev" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">vitalik.dev</a> и <a href="https://opencode.ai" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">opencode.ai</a>
+              Разработка: <a href="https://vitalik.dev" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">vitalik.dev</a> и <a href="https://opencode.ai" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">opencode.ai</a>
             </span>
           </div>
         </div>
