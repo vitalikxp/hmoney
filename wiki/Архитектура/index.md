@@ -6,7 +6,7 @@ status: updated
 
 # Обзор архитектуры
 
-HoneyMoney Lite — SPA на React, развёрнутое на GitHub Pages.
+hmoney — SPA на React, развёрнутое на GitHub Pages.
 Данные хранятся в Firebase Firestore, аутентификация — Firebase Auth.
 
 ## Высокоуровневая архитектура
