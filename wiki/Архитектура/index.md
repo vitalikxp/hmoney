@@ -7,6 +7,7 @@ status: updated
 # Обзор архитектуры
 
 hmoney — SPA на React, развёрнутое на GitHub Pages.
+Домен: https://money.vitalik.dev
 Данные хранятся в Firebase Firestore, аутентификация — Firebase Auth.
 
 ## Высокоуровневая архитектура
@@ -27,9 +28,11 @@ hmoney — SPA на React, развёрнутое на GitHub Pages.
 ## Ключевые решения
 
 1. **SPA + GitHub Pages** — zero-cost hosting, простота деплоя
-2. **Firebase Firestore** — бесплатный лимит, реальное время, офлайн-персистентность
-3. **Zustand** — лёгкий state manager (вместо Redux)
-4. **PWA** — работа на мобильных устройствах, офлайн-режим
+2. **Кастомный домен** — https://money.vitalik.dev (CNAME → vitalikxp.github.io)
+3. **CI/CD** — GitHub Actions: сборка + деплой на Pages при пуше в `master`
+4. **Firebase Firestore** — бесплатный лимит, реальное время, офлайн-персистентность
+5. **Zustand** — лёгкий state manager (вместо Redux)
+6. **PWA** — работа на мобильных устройствах, офлайн-режим
 
 ## Разделы
 - [Обоснование стека](./Стек.md)

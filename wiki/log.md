@@ -37,3 +37,11 @@
 - HoneyMoney_сайт.md: то же самое в «Влияние на требования»
 - Требования/index.md: таблица статусов не обновлена (Черновик→Актуально)
 - Компоненты.md: добавлено предупреждение о дубле /transactions/new vs NewTransactionModal
+
+## [2026-05-15] инициализация | Настройка проекта и домена
+- Инициализирован Vite + React + TS + Tailwind CSS v4
+- Создан лендинг «В разработке» (градиент, адаптивно, без копирайта)
+- Настроен GitHub Actions CI/CD деплой на GitHub Pages
+- CNAME: money.vitalik.dev
+- Wiki: добавлена информация о домене, GitHub Actions, CI/CD
+- AGENTS.md: git workflow, no-copyright policy, автор vitalik.dev

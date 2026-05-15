@@ -21,7 +21,7 @@ function App() {
               </span>
             ))}
           </div>
-          <div className="mt-4 pt-4 border-t border-white/10">
+          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
             <a
               href="https://github.com/vitalikxp/hmoney"
               target="_blank"
@@ -33,12 +33,12 @@ function App() {
               </svg>
               GitHub
             </a>
+            <span className="text-xs text-slate-500">
+              Разработчик: <a href="https://vitalik.dev" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">vitalik.dev</a>
+            </span>
           </div>
         </div>
       </main>
-      <footer className="mt-12 text-xs text-slate-600">
-        &copy; {new Date().getFullYear()} hmoney
-      </footer>
     </div>
   )
 }
