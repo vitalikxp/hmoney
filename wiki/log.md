@@ -45,6 +45,12 @@
 - Палитра: electric yellow `#faff69` на near-black `#0a0a0a`
 - Выбор обоснован: пчелиная гамма + data-dense + техническая точность
 
+## [2026-05-15] дизайн | Light mode для ClickHouse design system
+- Добавлена светлая тема через `@media (prefers-color-scheme: light)`
+- Инвертированы canvas/surface/text, желтый акцент `#faff69` сохранён
+- Шрифты Inter + JetBrains Mono через @fontsource (локально, без CDN)
+- Обновлены DESIGN.md (colors-light), wiki/Дизайн.md (секция Light)
+
 ## [2026-05-15] инициализация | Настройка проекта и домена
 - Инициализирован Vite + React + TS + Tailwind CSS v4
 - Создан лендинг «В разработке» (градиент, адаптивно, без копирайта)

@@ -29,6 +29,32 @@ colors:
   warning: "#f59e0b"
   error: "#ef4444"
 
+colors-light:
+  primary: "#faff69"
+  primary-active: "#e6eb52"
+  primary-disabled: "#d4d4d4"
+  ink: "#111111"
+  body: "#555555"
+  body-strong: "#333333"
+  muted: "#999999"
+  muted-soft: "#aaaaaa"
+  hairline: "#d4d4d4"
+  hairline-strong: "#cccccc"
+  canvas: "#ffffff"
+  surface-soft: "#fafafa"
+  surface-card: "#f5f5f5"
+  surface-elevated: "#e5e5e5"
+  surface-yellow-band: "#faff69"
+  on-primary: "#0a0a0a"
+  on-dark: "#111111"
+  on-yellow: "#0a0a0a"
+  accent-emerald: "#16a34a"
+  accent-rose: "#dc2626"
+  accent-blue: "#2563eb"
+  success: "#16a34a"
+  warning: "#d97706"
+  error: "#dc2626"
+
 typography:
   display-xl:
     fontFamily: "Inter, sans-serif"
