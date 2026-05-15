@@ -27,6 +27,9 @@
   --hairline: #2a2a2a;
   --body: #cccccc;
   --muted: #888888;
+  --dot: #141414;
+  --glow: rgba(250, 255, 105, 0.045);
+  --card-glow: rgba(250, 255, 105, 0.1);
 }
 
 @media (prefers-color-scheme: light) {
@@ -38,5 +41,26 @@
     --hairline: #d4d4d4;
     --body: #555555;
     --muted: #999999;
+    --dot: #ebebeb;
+    --glow: rgba(250, 255, 105, 0.25);
+    --card-glow: rgba(250, 255, 105, 0.35);
   }
+}
+
+body {
+  background-color: var(--canvas);
+}
+
+.dot-grid {
+  background-image:
+    radial-gradient(circle at 50% 50%, var(--dot) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.spotlight-layer {
+  background: radial-gradient(800px at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 60%);
+}
+
+.card-glow {
+  background: radial-gradient(500px at var(--cx, 50%) var(--cy, 50%), var(--card-glow), transparent 50%), var(--surface);
 }

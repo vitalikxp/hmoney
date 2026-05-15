@@ -1,7 +1,32 @@
+import { useCallback, useRef } from 'react'
+
 function App() {
+  const glowRef = useRef<HTMLDivElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (glowRef.current) {
+      const rect = glowRef.current.getBoundingClientRect()
+      glowRef.current.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`)
+      glowRef.current.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`)
+    }
+    if (cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect()
+      cardRef.current.style.setProperty('--cx', `${e.clientX - rect.left}px`)
+      cardRef.current.style.setProperty('--cy', `${e.clientY - rect.top}px`)
+    }
+  }, [])
+
   return (
-    <div className="min-h-screen bg-canvas flex flex-col items-center justify-center px-4 transition-colors">
-      <main className="text-center max-w-lg">
+    <div
+      onMouseMove={handleMouseMove}
+      className="dot-grid bg-canvas min-h-screen flex flex-col items-center justify-center px-4 transition-colors"
+    >
+      <div
+        ref={glowRef}
+        className="spotlight-layer pointer-events-none fixed inset-0 z-0"
+      />
+      <main className="text-center max-w-lg relative z-10">
         <span className="text-yellow text-6xl font-bold leading-none" aria-hidden="true">🐝</span>
         <h1 className="text-5xl font-bold tracking-tighter text-ink mt-4 mb-2">
           hmoney
@@ -12,7 +37,10 @@ function App() {
         <p className="text-body text-lg leading-relaxed mb-10">
           Приложение для ручного учёта личных финансов. Удобный инструмент для контроля бюджета, транзакций и финансового планирования.
         </p>
-        <div className="bg-surface border border-hairline rounded-xl p-6 text-left transition-colors">
+        <div
+          ref={cardRef}
+          className="card-glow rounded-xl p-6 text-left border border-hairline transition-colors"
+        >
           <h2 className="text-xs font-semibold text-muted uppercase tracking-widest mb-3">
             Технологии
           </h2>
