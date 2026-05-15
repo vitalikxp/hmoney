@@ -15,7 +15,7 @@ function App() {
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 text-left border border-white/10">
           <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Технологии</h2>
           <div className="flex flex-wrap gap-2">
-            {['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Firebase', 'PWA'].map(t => (
+            {['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Firebase', 'PWA', 'opencode.ai'].map(t => (
               <span key={t} className="px-2.5 py-1 text-xs font-medium bg-white/10 text-slate-200 rounded-md">
                 {t}
               </span>
@@ -34,7 +34,7 @@ function App() {
               GitHub
             </a>
             <span className="text-xs text-slate-500">
-              Разработчик: <a href="https://vitalik.dev" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">vitalik.dev</a>
+              Разработчик: <a href="https://vitalik.dev" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">vitalik.dev</a> и <a href="https://opencode.ai" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">opencode.ai</a>
             </span>
           </div>
         </div>
