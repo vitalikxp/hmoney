@@ -3,6 +3,7 @@ import AuthGuard from './components/AuthGuard'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import AccountsPage from './pages/AccountsPage'
+import EnvelopesPage from './pages/EnvelopesPage'
 
 function App() {
   return (
@@ -15,6 +16,14 @@ function App() {
           element={
             <AuthGuard>
               <AccountsPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/envelopes"
+          element={
+            <AuthGuard>
+              <EnvelopesPage />
             </AuthGuard>
           }
         />
