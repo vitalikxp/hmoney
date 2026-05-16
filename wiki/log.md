@@ -1,3 +1,9 @@
+---
+created: 2026-05-15
+tags: [changelog, log]
+status: updated
+---
+
 # Журнал изменений
 
 ## [2026-05-16] требования | Категории убраны из ТЗ
@@ -86,6 +92,44 @@
 - Инвертированы canvas/surface/text, желтый акцент `#faff69` сохранён
 - Шрифты Inter + JetBrains Mono через @fontsource (локально, без CDN)
 - Обновлены DESIGN.md (colors-light), wiki/Дизайн.md (секция Light)
+
+## [2026-05-16] аудит wiki — полный
+- ТЗ.md: Alt+X → прогноз Резервов (было Net Worth); типы счетов → card/investment/cash (выводимые)
+- Данные.md: добавлены includeInBalance, currency, sortOrder в модель Account; ссылки `../Архитектура/` → `./`
+- Компоненты.md: ссылки `../Архитектура/` → `./`
+- Дизайн.md: порядок секций исправлен (Вопросы → Связанные страницы)
+- ФТ.md: AC-01 (chequing/savings → выводимые типы); секции перенумерованы 5→4,6→5,7→6,8→7; AN-05..07 → AN-02..04
+- log.md: добавлен frontmatter
+- index.md: %20 → пробел
+- Источники/Справка: текст ссылок без лже-якорей
+
+## [2026-05-16] аудит | Закрыты вопросы и противоречия
+- Все 9 вопросов в wiki закрыты с решениями, оставлены для истории
+- `description?` удалён из Account (dead code)
+- TR-12: браузерный HTML5 DnD
+- Transfer: `runTransaction` для атомарности
+- Route vs modal: только модал
+- Регулярные: ручные шаблоны в MVP
+- Индексы: перенесены в to-do
+- Данные.md: секция To-do для Firebase индексов
+
+## [2026-05-16] аудит | Модели данных приведены к коду
+- Account: `includeInBalance`, `currency`, `sortOrder` убраны из post-MVP (уже реализованы)
+- Account: `color` удалён (нет в коде)
+- UserProfile: заменён на реальную модель (email, без currency/displayName)
+- Envelope/Transaction: помечены ⚠️ «Не реализовано», суммы исправлены на целые рубли
+- Хранение сумм: добавлено предупреждение проверить копейки при реализации
+- Добавлен вопрос про `description?` в Account (dead field)
+
+## [2026-05-16] реализация | Счета: CRUD, группировка, иконки
+- Созданы: Account (type), accountService (Firestore CRUD), accountStore (Zustand)
+- Созданы: AccountsPage, AccountCard, AccountGroup, AccountList, AccountModal, IconPicker
+- Dashboard удалён, `/` редиректит на `/accounts`
+- Тип счёта выводится из `creditLimit`, не хранится явно
+- Баланс в целых рублях (без копеек)
+- Wiki: Данные.md — модель Account приведена к реализации
+- Wiki: Компоненты.md — ✅ для реализованных компонентов, AccountForm → AccountModal
+- Wiki: Архитектура/index.md — добавлены решения 7-10
 
 ## [2026-05-16] аудит | Исправление найденных проблем
 - index.md: добавлен `status: updated` в frontmatter

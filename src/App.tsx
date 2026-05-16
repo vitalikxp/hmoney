@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AuthGuard from './components/AuthGuard'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
-import Dashboard from './pages/Dashboard'
+import AccountsPage from './pages/AccountsPage'
 
 function App() {
   return (
@@ -11,14 +11,14 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
-          path="/"
+          path="/accounts"
           element={
             <AuthGuard>
-              <Dashboard />
+              <AccountsPage />
             </AuthGuard>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/accounts" replace />} />
       </Routes>
     </BrowserRouter>
   )
