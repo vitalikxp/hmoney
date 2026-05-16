@@ -1,10 +1,25 @@
 ---
-created: 2026-05-15
+created: 2026-05-16
 tags: [changelog, log]
 status: updated
 ---
 
 # Журнал изменений
+
+## [2026-05-16] аудит | Исправление env-префикса, удаление GITHUB_TOKEN
+- Аутентификация.md: `VITE_FIREBASE_*` → `FIREBASE_*` (соответствие реальному .env)
+- index.md: добавлена ссылка на E2E-секцию AGENTS.md, счётчик 24
+- .env: удалён GITHUB_TOKEN
+
+## [2026-05-16] e2e | Cleanup: удаление тестовых пользователей через Admin SDK
+
+- e2e: создан record.ts — запись email'ов тестовых пользователей
+- e2e: создан cleanup.ts — удаление пользователей из Auth + Firestore (recursiveDelete)
+- auth.spec.ts, accounts.spec.ts: record(email) после регистрации
+- package.json: скрипты test:e2e:cleanup, test:e2e:full
+- .env: добавлен FIREBASE_SERVICE_ACCOUNT
+- .env.example, .gitignore: обновлены
+- AGENTS.md: секция «Очистка тестовых пользователей»
 
 ## [2026-05-16] требования | Категории убраны из ТЗ
 - ТЗ.md: удалена секция 3.3 Категории, исправлена нумерация 3.5→3.4, 3.6→3.5, 3.7→3.6
@@ -151,6 +166,21 @@ status: updated
 - Best practices: приоритет запросов, userEvent, vi.hoisted(), without ESLint/Biome
 - Паттерны моков: Firebase модули, Zustand stores через vi.mock + vi.hoisted(), сервисный слой
 - Обязательный запуск `npm test` перед сдачей задачи
+
+## [2026-05-16] e2e | Playwright — E2E тестирование
+- Установлен @playwright/test, загружен Chromium
+- Создан playwright.config.ts: два проекта (local с webServer, production против money.vitalik.dev)
+- Созданы: e2e/models/LoginPage.ts (POM), e2e/models/RegisterPage.ts, e2e/fixtures.ts, e2e/auth.spec.ts (2 теста)
+- Добавлены скрипты: test:e2e, test:e2e:prod, test:e2e:ui, test:e2e:headed
+- AGENTS.md: добавлен раздел `## E2E-тестирование (Playwright)`
+- Тестовый аккаунт: test@vitalik.dev / Pa$$w0rd
+
+## [2026-05-16] e2e | Добавлены Accounts CRUD тесты
+- Созданы: e2e/models/AccountsPage.ts, e2e/models/AccountModal.ts
+- Написаны тесты: пустое состояние, create (minimal, credit, excluded, group), edit, delete
+- Добавлены auth-тесты на ошибки: wrong credentials, password mismatch, short password
+- production проект исключает accounts.spec.ts (страница Счетов только в dev)
+- Всего E2E: 17 тестов (12 local + 5 production)
 
 ## [2026-05-15] инициализация | Настройка проекта и домена
 - Инициализирован Vite + React + TS + Tailwind CSS v4

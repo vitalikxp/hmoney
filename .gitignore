@@ -4,5 +4,12 @@ dist/
 *.local
 .DS_Store
 .playwright-mcp/
-
 hm-demo-main
+playwright/.auth/
+test-results/
+playwright-report/
+e2e/test-users.json
+e2e/service-account.json
+e2e/debug-*.ts
+firebase.private.json
+/*private*

@@ -194,3 +194,142 @@ render(<AccountCard account={createMockAccount({ name: 'Наличные' })} on
 ### CI
 
 `npm test` запускается перед `npm run build` в GitHub Actions (см. `.github/workflows/deploy.yml`). Если тесты падают — деплой блокируется.
+
+## E2E-тестирование (Playwright)
+
+### Обязательное правило
+
+Перед сдачей задачи, которая добавляет новую страницу, раздел приложения или сквозной сценарий (логин, CRUD), агент **обязан** написать E2E-тесты для этого сценария и убедиться, что они проходят.
+
+Запускать через `npm run test:e2e:full` — это прогоняет все тесты на localhost + запускает очистку тестовых пользователей.
+
+### Стек
+
+- **Runner:** Playwright Test (`@playwright/test`)
+- **Браузер:** Chromium (только он, для скорости)
+- **Конфиг:** `playwright.config.ts`
+- **Тесты:** `e2e/*.spec.ts`
+- **Page Objects:** `e2e/models/*.ts`
+- **Фикстуры:** `e2e/fixtures.ts`
+
+### Запуск
+
+| Команда | Описание |
+|---------|----------|
+| `npm run test:e2e` | Все тесты на localhost (автозапуск `npm run dev` через `webServer`) |
+| `npm run test:e2e:prod` | Все тесты против https://money.vitalik.dev |
+| `npm run test:e2e:ui` | UI Mode (watch, time travel) |
+| `npm run test:e2e:headed` | С видимым браузером (для отладки) |
+| `npm run test:e2e:cleanup` | Удалить тестовых пользователей из Auth + Firestore |
+| `npm run test:e2e:full` | Прогнать тесты на localhost, затем очистить пользователей |
+
+### Структура
+
+```
+e2e/
+├── models/
+│   ├── LoginPage.ts       # Page Object Model для /login
+│   ├── RegisterPage.ts    # Page Object Model для /register
+│   ├── AccountsPage.ts    # Page Object Model для /accounts
+│   └── AccountModal.ts    # Page Object Model для модала счёта
+├── fixtures.ts            # Кастомные фикстуры (loginPage, accountsPage и т.д.)
+├── auth.spec.ts           # Тесты аутентификации (5 тестов: redirect, register→logout→login, ошибки)
+├── accounts.spec.ts       # Тесты счетов (7 тестов: empty, create, edit, delete)
+└── *.spec.ts              # Остальные E2E-тесты
+```
+
+### Page Object Model
+
+Каждая страница приложения — отдельный класс в `e2e/models/`. POM инкапсулирует локаторы и действия:
+
+```ts
+class LoginPage {
+  readonly heading: Locator
+  readonly emailInput: Locator
+
+  constructor(page: Page) {
+    this.heading = page.getByRole('heading', { name: /hmoney/i })
+    this.emailInput = page.getByLabel(/email/i)
+  }
+
+  async goto() { await this.page.goto('/') }
+  async login(email: string, password: string) { /* fill + click */ }
+}
+```
+
+### Фикстуры
+
+Общие объекты (POM) выносятся в фикстуры, чтобы не создавать в каждом тесте:
+
+```ts
+// e2e/fixtures.ts
+import { test as base } from '@playwright/test'
+import { LoginPage } from './models/LoginPage'
+
+export const test = base.extend<MyFixtures>({
+  loginPage: async ({ page }, use) => {
+    const loginPage = new LoginPage(page)
+    await use(loginPage)
+  },
+})
+```
+
+### Аккаунт для тестов
+
+- **Email:** `test@vitalik.dev`
+- **Пароль:** `Pa$$w0rd`
+- Используй один и тот же аккаунт для большинства тестов — так не плодятся пользователи в Firestore
+- Если тест проверяет регистрацию, используй динамический email: `test-${Date.now()}@vitalik.dev`
+
+### Особенности Firebase Auth
+
+Firebase Auth хранит сессию в IndexedDB. Playwright не умеет сохранять IndexedDB через `storageState`, поэтому:
+- Для анонимных тестов (редирект на `/login`) — авторизация не нужна
+- Для авторизованных тестов — логин через UI в `beforeEach` или в фикстуре
+
+### Best practices
+
+1. **Тестируй поведение пользователя** — `getByRole`, `getByLabel`, `getByText`. Не используй CSS-классы или XPath.
+2. **Web-first assertions** — `await expect(el).toBeVisible()` (ждёт и ретраит). Не используй `isVisible()` напрямую.
+3. **Page Object Model** — каждый тест работает через POM, а не через сырые page.locator.
+4. **Не тестируй внешние сервисы** — Firebase для E2E — реальный, это часть теста.
+5. **Один тест — один сценарий** — не смешивай проверки логина и CRBA счетов в одном тесте.
+6. **`.env.e2e`** — если нужны переменные, создай `e2e/.env.e2e` и загружай через `dotenv` в конфиге.
+
+### Очистка тестовых пользователей
+
+Каждый тест создаёт нового пользователя через регистрацию. После прогона пользователи удаляются через Firebase Admin SDK.
+
+**Утилиты:**
+- `e2e/record.ts` — записывает email'ы тестовых пользователей в `e2e/test-users.json` (`.gitignore`)
+- `e2e/cleanup.ts` — читает `test-users.json`, удаляет пользователя из Auth и Firestore (рекурсивно)
+
+**Команды:**
+| Команда | Описание |
+|---------|----------|
+| `npm run test:e2e:cleanup` | Удалить всех записанных пользователей |
+| `npm run test:e2e:full` | Прогнать тесты + очистка |
+
+**Переменные окружения:**
+- `FIREBASE_SERVICE_ACCOUNT` — полный JSON сервисного аккаунта Firebase Admin SDK (в `.env`)
+- Сервисный аккаунт также может лежать в `firebase.private.json` (проектный корень, `.gitignore`) — cleanup.ts загружает его оттуда, если `FIREBASE_SERVICE_ACCOUNT` не задан
+
+**Как работает:**
+1. Тест вызывает `record(email)` после успешной регистрации
+2. Email сохраняется в `e2e/test-users.json`
+3. `cleanup.ts` проходит по списку, для каждого email:
+   - Ищет пользователя в Auth
+   - Удаляет `users/{uid}` рекурсивно (документ + подколлекции)
+   - Удаляет пользователя из Auth
+4. После очистки `test-users.json` обнуляется
+
+### CI
+
+E2E-тесты на CI пока не добавлены (первый тест — ручной). Для добавления в CI:
+- В `.github/workflows/deploy.yml` добавить шаг с Firestore эмулятором (или моком) для локального прогона
+- Production-тесты запускать после деплоя с `--project=production`
+
+### Когда использовать E2E вместо unit
+
+- **E2E:** проверка сквозных сценариев (логин → создание счёта), взаимодействие с реальным Firebase, редиректы, защита роутов
+- **Unit:** изолированные компоненты, сторы, сервисы. Firebase мокается. E2E не нужен
