@@ -1,0 +1,114 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BudgetSummaryWidget > отображает большие суммы и корректно форматирует их 1`] = `
+<body>
+  <div>
+    <div
+      class="card-glow overflow-hidden rounded-lg border border-hairline"
+    >
+      <div
+        class="px-4 py-4"
+      >
+        <div
+          class="flex items-center justify-between gap-3"
+        >
+          <div
+            class="min-w-0"
+          >
+            <div
+              class="text-xs font-medium uppercase text-muted"
+            >
+              Всего
+            </div>
+            <div
+              class="mt-1 break-words font-mono text-2xl font-semibold tabular-nums text-link"
+            >
+              39 999 996
+              ₽
+            </div>
+          </div>
+          <div
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-yellow/10 text-xl"
+          >
+            📊
+          </div>
+        </div>
+      </div>
+      <div>
+        <div
+          class="flex items-center justify-between gap-3 border-t border-hairline px-4 py-3"
+        >
+          <div
+            class="flex min-w-0 items-center gap-2"
+          >
+            <span
+              class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-elevated text-sm leading-none"
+            >
+              🐝
+            </span>
+            <span
+              class="truncate text-sm text-muted"
+            >
+              ХаниМани
+            </span>
+          </div>
+          <span
+            class="shrink-0 font-mono text-sm font-medium tabular-nums text-ink"
+          >
+            9 999 999
+            ₽
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between gap-3 border-t border-hairline px-4 py-3"
+        >
+          <div
+            class="flex min-w-0 items-center gap-2"
+          >
+            <span
+              class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-elevated text-sm leading-none"
+            >
+              🛡️
+            </span>
+            <span
+              class="truncate text-sm text-muted"
+            >
+              Резервы
+            </span>
+          </div>
+          <span
+            class="shrink-0 font-mono text-sm font-medium tabular-nums text-ink"
+          >
+            9 999 999
+            ₽
+          </span>
+        </div>
+        <div
+          class="flex items-center justify-between gap-3 border-t border-hairline px-4 py-3"
+        >
+          <div
+            class="flex min-w-0 items-center gap-2"
+          >
+            <span
+              class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-elevated text-sm leading-none"
+            >
+              🏦
+            </span>
+            <span
+              class="truncate text-sm text-muted"
+            >
+              Накопления
+            </span>
+          </div>
+          <span
+            class="shrink-0 font-mono text-sm font-medium tabular-nums text-ink"
+          >
+            9 999 999
+            ₽
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

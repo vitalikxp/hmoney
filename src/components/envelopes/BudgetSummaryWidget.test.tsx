@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
 import BudgetSummaryWidget from './BudgetSummaryWidget';
 
 describe('BudgetSummaryWidget', () => {
@@ -13,10 +14,13 @@ describe('BudgetSummaryWidget', () => {
       />
     );
 
-    // Verify that the large number is present and formatted (e.g., "9 999 999₽")
-    expect(screen.getByText('9 999 999₽')).toBeInTheDocument();
-    // Вы также можете добавить более конкретные проверки или снапшот-тест здесь.
-    // expect(screen.debug()).toMatchSnapshot();
+    // Проверяем, что большие суммы отображаются и не ломают layout
+    // Проверяем, что все 3 суммы есть
+    expect(screen.getAllByText('9 999 999₽')).toHaveLength(3);
+    // Проверяем, что итоговая сумма есть
+    expect(screen.getByText('39 999 996₽')).toBeInTheDocument();
+    // Снапшот для контроля верстки
+    expect(document.body).toMatchSnapshot();
   });
 
   // Добавить другие тесты по мере необходимости для различных сценариев

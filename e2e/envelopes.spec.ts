@@ -14,13 +14,13 @@ async function registerAndLogin(page: import('@playwright/test').Page): Promise<
 }
 
 test.describe('Конверты', () => {
-  test('показывает встроенные конверты', async ({ page, envelopesPage }) => {
+  test('показывает встроенные суммы', async ({ page, envelopesPage }) => {
     await registerAndLogin(page)
     await envelopesPage.goto()
 
     await expect(envelopesPage.heading).toBeVisible()
-    await expect(page.getByRole('button', { name: /ХаниМани/i })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Резервы/i })).toBeVisible()
+    await expect(page.getByText('ХаниМани', { exact: true })).toBeVisible()
+    await expect(page.getByText('Резервы', { exact: true })).toBeVisible()
   })
 
   test('создать конверт-фонд', async ({ page, envelopesPage }) => {
@@ -68,13 +68,13 @@ test.describe('Конверты', () => {
     await expect(page.getByText(name, { exact: true })).not.toBeVisible()
   })
 
-  test('нельзя удалить встроенный конверт', async ({ page, envelopesPage }) => {
+  test('встроенные суммы не показывают действия редактирования', async ({ page, envelopesPage }) => {
     await registerAndLogin(page)
     await envelopesPage.goto()
 
-    // Navigate from type label (nth(2) of 'ХаниМани') up to card row: type-label → flex-1 → card row
-    const row = page.getByText('ХаниМани', { exact: true }).nth(2).locator('..').locator('..')
-    await expect(row.getByTitle('Редактировать')).toBeVisible()
-    await expect(row.getByTitle('Удалить')).not.toBeVisible()
+    await expect(page.getByText('ХаниМани', { exact: true })).toBeVisible()
+    await expect(page.getByText('Резервы', { exact: true })).toBeVisible()
+    await expect(page.getByTitle('Редактировать')).toHaveCount(0)
+    await expect(page.getByTitle('Удалить')).toHaveCount(0)
   })
 })

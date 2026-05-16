@@ -5,19 +5,22 @@ interface Props {
   total: number
 }
 
-interface TileProps {
+interface BreakdownRowProps {
   icon: string
   label: string
   balance: number
-  accent?: boolean
 }
 
-function Tile({ icon, label, balance, accent }: TileProps) {
+function BreakdownRow({ icon, label, balance }: BreakdownRowProps) {
   return (
-    <div className={`flex flex-col items-center gap-1 px-3 py-4 ${accent ? 'bg-elevated/70' : ''}`}>
-      <span className="text-base leading-none">{icon}</span>
-      <span className="text-xs text-muted">{label}</span>
-      <span className={`text-sm font-mono font-semibold tabular-nums ${accent ? 'text-ink' : 'text-ink'}`}>
+    <div className="flex items-center justify-between gap-3 border-t border-hairline px-4 py-3">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-elevated text-sm leading-none">
+          {icon}
+        </span>
+        <span className="truncate text-sm text-muted">{label}</span>
+      </div>
+      <span className="shrink-0 font-mono text-sm font-medium tabular-nums text-ink">
         {balance.toLocaleString('ru-RU')}₽
       </span>
     </div>
@@ -26,12 +29,24 @@ function Tile({ icon, label, balance, accent }: TileProps) {
 
 export default function BudgetSummaryWidget({ spendingBalance, reserveBalance, goalsBalance, total }: Props) {
   return (
-    <div className="border border-hairline rounded-lg overflow-hidden">
-            <div className="flex flex-nowrap overflow-x-auto divide-x divide-hairline">
-        <Tile icon="🧃" label="ХаниМани" balance={spendingBalance} />
-        <Tile icon="🛡️" label="Резервы" balance={reserveBalance} />
-        <Tile icon="🏦" label="Накопления" balance={goalsBalance} />
-        <Tile icon="📊" label="Всего" balance={total} accent />
+    <div className="card-glow overflow-hidden rounded-lg border border-hairline">
+      <div className="px-4 py-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="text-xs font-medium uppercase text-muted">Всего</div>
+            <div className="mt-1 break-words font-mono text-2xl font-semibold tabular-nums text-link">
+              {total.toLocaleString('ru-RU')}₽
+            </div>
+          </div>
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-yellow/10 text-xl">
+            📊
+          </div>
+        </div>
+      </div>
+      <div>
+        <BreakdownRow icon="🐝" label="ХаниМани" balance={spendingBalance} />
+        <BreakdownRow icon="🛡️" label="Резервы" balance={reserveBalance} />
+        <BreakdownRow icon="🏦" label="Накопления" balance={goalsBalance} />
       </div>
     </div>
   )
