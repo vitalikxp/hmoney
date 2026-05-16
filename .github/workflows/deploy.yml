@@ -34,6 +34,7 @@ jobs:
           FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
           EOF
         name: Create .env from secrets
+      - run: npm test
       - run: npm run build
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3

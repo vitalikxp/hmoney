@@ -121,6 +121,16 @@ status: updated
 - Хранение сумм: добавлено предупреждение проверить копейки при реализации
 - Добавлен вопрос про `description?` в Account (dead field)
 
+## [2026-05-16] тестирование | Unit-тесты (vitest + testing-library)
+- Установлены: vitest, @testing-library/react, @testing-library/jest-dom, @testing-library/user-event, jsdom
+- Созданы: vitest.config.ts, src/test/setup.ts
+- Скрипты: `npm test`, `npm run test:watch`
+- Тесты: 10 файлов, 76 тестов — все проходят
+- CI: `npm test` добавлен в deploy.yml перед `npm run build`
+- Покрытие: stores (authStore, accountStore), components (AccountCard, AccountGroup, AccountList, AccountModal, AuthGuard), pages (AccountsPage, LoginPage, RegisterPage)
+- src/test исключён из tsconfig.app.json (build не проверяет тесты)
+- Инфраструктура: vi.hoisted() для mock-переменных, глобальный afterEach(cleanup)
+
 ## [2026-05-16] реализация | Счета: CRUD, группировка, иконки
 - Созданы: Account (type), accountService (Firestore CRUD), accountStore (Zustand)
 - Созданы: AccountsPage, AccountCard, AccountGroup, AccountList, AccountModal, IconPicker
@@ -135,6 +145,12 @@ status: updated
 - index.md: добавлен `status: updated` в frontmatter
 - index.md: добавлена ссылка на log.md в каталог
 - index.md: счётчик обновлений исправлен с 6 на 9
+
+## [2026-05-16] тестирование | AGENTS.md — секция unit-тестирования
+- AGENTS.md: добавлен раздел `## Unit-тестирование` с правилами для агентов
+- Best practices: приоритет запросов, userEvent, vi.hoisted(), without ESLint/Biome
+- Паттерны моков: Firebase модули, Zustand stores через vi.mock + vi.hoisted(), сервисный слой
+- Обязательный запуск `npm test` перед сдачей задачи
 
 ## [2026-05-15] инициализация | Настройка проекта и домена
 - Инициализирован Vite + React + TS + Tailwind CSS v4

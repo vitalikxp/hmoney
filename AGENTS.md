@@ -91,3 +91,106 @@ wiki/
 - Вся разработка ведётся в ветке `dev`
 - Сливать `dev` в `master` и деплоить — **только по явному запросу пользователя** («слей в мастер» или «сделай деплой»)
 - Пользователь сам управляет, когда изменения попадают в продакшен
+
+## Unit-тестирование
+
+### Обязательное правило
+
+Перед сдачей любой задачи (написание кода, рефакторинг, исправление бага) агент **обязан** запустить `npm test`.
+Если какие-то тесты упали — сначала починить их, только потом сообщать о завершении.
+
+### Стек
+
+- **Runner:** Vitest (через `vitest run` / `vitest`)
+- **Рендер:** `@testing-library/react`
+- **Матчеры:** `@testing-library/jest-dom/vitest` (`toBeInTheDocument`, `toHaveTextContent`)
+- **События:** `@testing-library/user-event` (`user.click`, `user.type`)
+- **Окружение:** `jsdom`
+- **Запуск:** `npm test` (однократно), `npm run test:watch` (watch mode)
+- **Конфиг:** `vitest.config.ts`, `src/test/setup.ts`
+
+### Где лежат тесты
+
+- Тесты располагаются рядом с исходным файлом: `src/stores/authStore.test.ts`, `src/pages/LoginPage.test.tsx`
+- Фабрики тестовых данных: `src/test/mocks/account.ts`
+- Общий setup (jest-dom, `afterEach(cleanup)`): `src/test/setup.ts`
+- Тесты исключены из `tsconfig.app.json` (build не проверяет)
+
+### Best practices
+
+1. **Тестируй поведение, не реализацию.**  
+   Пользователю всё равно, какой внутренний state у компонента.  
+   ✅ `getByRole('button', { name: /сохранить/i })`  
+   ❌ `getByTestId('submit-button')` или проверка `wrapper.find(Button).prop('disabled')`
+
+2. **Приоритет запросов к DOM:**  
+   `getByRole` → `getByLabelText` → `getByText` → `getByPlaceholderText` → `getByTitle` → `getByTestId`  
+   `getByTestId` — только если никакой другой запрос не подходит.
+
+3. **Используй `userEvent`, не `fireEvent`.**  
+   `userEvent` симулирует реальные браузерные события (клик, набор текста, фокус, таб).  
+   ✅ `user.click(btn)` / `user.type(input, 'text')`  
+   ❌ `fireEvent.click(btn)` / `fireEvent.change(input, { target: { value: 'text' } })`
+
+4. **Не вызывай `act()` напрямую.**  
+   RTL и `userEvent` уже оборачивают действия в `act`.
+
+5. **Заполняй все required-поля перед submit.**  
+   Браузерная валидация (`required`) блокирует отправку формы, если поле пустое.
+
+6. **Проверяй состояния компонента:** empty, loading, error — они часть UX.
+
+7. **Не тестируй Tailwind-классы, CSS-стили, внутренний state.**  
+   Тестируй то, что видит пользователь: текст, видимость элементов, вызовы колбэков.
+
+8. **Один `describe` на компонент/стор/страницу.**  
+   Внутри — изолированные тесты на каждое поведение.
+
+9. **Имена тестов — на русском, описывают поведение:**  
+   ✅ `it('показывает ошибку при пустом имени')`  
+   ❌ `it('should render error when name is empty')`
+
+10. **Не тестируй типы и интерфейсы.** TypeScript уже проверяет их на этапе компиляции.
+
+### Паттерны моков для этого проекта
+
+**Firebase/Auth/Firestore** — мокаются на уровне модулей. Подробнее — в `src/stores/authStore.test.ts`:
+```ts
+vi.mock('firebase/auth', () => ({
+  signInWithEmailAndPassword: vi.fn(),
+  onAuthStateChanged: vi.fn((_auth, cb) => { cb(null); return () => {} }),
+  // ...
+}))
+vi.mock('firebase/firestore', () => ({
+  setDoc: vi.fn(),
+  serverTimestamp: vi.fn(() => null),
+  // ...
+}))
+```
+
+**Zustand stores** — мокаются через `vi.mock` + `vi.hoisted()` (чтобы избежать TDZ):
+```ts
+const { mockUseAuthStore } = vi.hoisted(() => ({ mockUseAuthStore: vi.fn() }))
+vi.mock('../stores/authStore', () => ({ useAuthStore: mockUseAuthStore }))
+// в тесте:
+mockUseAuthStore.mockReturnValue({ user: null, loading: false, login: vi.fn() })
+```
+
+**Сервисный слой** — мокается в store-тестах:
+```ts
+const { mockService } = vi.hoisted(() => ({
+  mockService: { fetchAccounts: vi.fn(), createAccount: vi.fn() },
+}))
+vi.mock('../lib/accountService', () => mockService)
+```
+
+**Компоненты без внешних зависимостей** (AccountCard, AccountGroup) тестируются напрямую через props — без моков. Фабрика `createMockAccount()` создаёт Account с дефолтными полями:
+```ts
+render(<AccountCard account={createMockAccount({ name: 'Наличные' })} onEdit={fn} onDelete={fn} />)
+```
+
+**Компоненты с модалами** (AccountsPage) — модал мокается через `vi.mock` компонента, чтобы не рендерить его реальную форму.
+
+### CI
+
+`npm test` запускается перед `npm run build` в GitHub Actions (см. `.github/workflows/deploy.yml`). Если тесты падают — деплой блокируется.
