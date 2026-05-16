@@ -1,5 +1,16 @@
 # Журнал изменений
 
+## [2026-05-16] аудит | Исправление счётчика обновлений
+- index.md: счётчик исправлен с 11 на 12
+
+## [2026-05-16] реализация | Регистрация и аутентификация
+- Установлены firebase, react-router-dom, zustand
+- Созданы: firebase.ts, authStore (Zustand), AuthGuard, LoginPage, RegisterPage, Dashboard
+- App.tsx переписан на BrowserRouter с маршрутами /, /login, /register
+- Добавлен .env с Firebase config, .env.example — шаблон
+- build-скрипт: копирование index.html → 404.html для SPA routing на GH Pages
+- Создана страница wiki/Исследования/Аутентификация.md
+
 ## [2026-05-15] инициализация | Создание структуры wiki
 Создана начальная структура wiki: index.md, log.md, AGENTS.md,
 категории requirements, architecture, sources и research.
@@ -50,6 +61,11 @@
 - Инвертированы canvas/surface/text, желтый акцент `#faff69` сохранён
 - Шрифты Inter + JetBrains Mono через @fontsource (локально, без CDN)
 - Обновлены DESIGN.md (colors-light), wiki/Дизайн.md (секция Light)
+
+## [2026-05-16] аудит | Исправление найденных проблем
+- index.md: добавлен `status: updated` в frontmatter
+- index.md: добавлена ссылка на log.md в каталог
+- index.md: счётчик обновлений исправлен с 6 на 9
 
 ## [2026-05-15] инициализация | Настройка проекта и домена
 - Инициализирован Vite + React + TS + Tailwind CSS v4

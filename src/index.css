@@ -17,6 +17,13 @@
   --color-hairline: var(--hairline, #2a2a2a);
   --color-body: var(--body, #cccccc);
   --color-muted: var(--muted, #888888);
+  --color-rose: var(--rose, #ef4444);
+  --color-emerald: var(--emerald, #22c55e);
+  --color-blue: var(--blue, #3b82f6);
+  --color-link: var(--link, #faff69);
+  --color-success: var(--success, #22c55e);
+  --color-warning: var(--warning, #f59e0b);
+  --color-error: var(--error, #ef4444);
 }
 
 :root {
@@ -30,6 +37,13 @@
   --dot: #141414;
   --glow: rgba(250, 255, 105, 0.045);
   --card-glow: rgba(250, 255, 105, 0.1);
+  --rose: #ef4444;
+  --emerald: #22c55e;
+  --blue: #3b82f6;
+  --link: #faff69;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
 }
 
 @media (prefers-color-scheme: light) {
@@ -44,6 +58,13 @@
     --dot: #ebebeb;
     --glow: rgba(250, 255, 105, 0.25);
     --card-glow: rgba(250, 255, 105, 0.35);
+    --rose: #dc2626;
+    --emerald: #16a34a;
+    --blue: #2563eb;
+    --link: #2563eb;
+    --success: #16a34a;
+    --warning: #d97706;
+    --error: #dc2626;
   }
 }
 
