@@ -27,7 +27,7 @@ function Tile({ icon, label, balance, accent }: TileProps) {
 export default function BudgetSummaryWidget({ spendingBalance, reserveBalance, goalsBalance, total }: Props) {
   return (
     <div className="border border-hairline rounded-lg overflow-hidden">
-      <div className="grid grid-cols-4 divide-x divide-hairline">
+            <div className="flex flex-nowrap overflow-x-auto divide-x divide-hairline">
         <Tile icon="🧃" label="ХаниМани" balance={spendingBalance} />
         <Tile icon="🛡️" label="Резервы" balance={reserveBalance} />
         <Tile icon="🏦" label="Накопления" balance={goalsBalance} />
