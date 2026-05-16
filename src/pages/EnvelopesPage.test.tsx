@@ -70,11 +70,6 @@ describe('EnvelopesPage', () => {
     expect(screen.getByText('Загрузка…')).toBeInTheDocument()
   })
 
-  it('shows empty state', () => {
-    renderPage()
-    expect(screen.getByText('У вас пока нет конвертов')).toBeInTheDocument()
-  })
-
   it('shows error message', () => {
     mockUseEnvelopeStore.mockReturnValueOnce({
       envelopes: [], loading: false, error: 'Ошибка', fetchEnvelopes: mockFetchEnvelopes,
@@ -115,22 +110,11 @@ describe('EnvelopesPage', () => {
     expect(screen.getByTestId('envelope-modal')).toBeInTheDocument()
   })
 
-  it('opens modal on "Создать первый конверт" click in empty state', async () => {
-    const user = userEvent.setup()
-    renderPage()
-    await user.click(screen.getByText('Создать первый конверт'))
-    expect(screen.getByTestId('envelope-modal')).toBeInTheDocument()
-  })
-
-  it('creates envelope via modal submit', async () => {
+  it('создаёт конверт через модал', async () => {
     mockCreateEnvelope.mockResolvedValue(undefined)
-    mockUseEnvelopeStore.mockReturnValueOnce({
-      envelopes: [], loading: false, error: null, fetchEnvelopes: mockFetchEnvelopes,
-      createEnvelope: mockCreateEnvelope, updateEnvelope: mockUpdateEnvelope, deleteEnvelope: mockDeleteEnvelope,
-    })
     const user = userEvent.setup()
     renderPage()
-    await user.click(screen.getByText('Создать первый конверт'))
+    await user.click(screen.getByText('+ Создать'))
     await user.click(screen.getByTestId('modal-submit'))
     expect(mockCreateEnvelope).toHaveBeenCalled()
   })

@@ -17,7 +17,7 @@ function accountsRef(userId: string) {
 }
 
 export async function fetchAccounts(userId: string): Promise<Account[]> {
-  const q = query(accountsRef(userId), orderBy('sortOrder'))
+  const q = query(accountsRef(userId), orderBy('createdAt'))
   const snapshot = await getDocs(q)
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Account))
 }

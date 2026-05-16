@@ -10,14 +10,12 @@ interface Props {
 const ICONS = ['🧃', '🛡️', '🏦', '🎯', '💰', '🏠', '🚗', '🎓', '✈️', '🛒', '🍽️', '🏥', '🎮', '👶', '📱', '💎', '🐾', '🌴']
 
 const TYPES: Array<{ value: EnvelopeType; label: string }> = [
-  { value: 'spending', label: 'ХаниМани' },
-  { value: 'reserve', label: 'Резервы' },
   { value: 'fund', label: 'Фонды' },
   { value: 'goal', label: 'Цели' },
 ]
 
 function toInput(envelope: Envelope | null): CreateEnvelopeInput {
-  if (!envelope) return { name: '', type: 'fund', balance: 0, sortOrder: 0, isHidden: false, icon: ICONS[0] }
+  if (!envelope) return { name: '', type: 'fund', balance: 0, sortOrder: 0, isHidden: false, icon: ICONS[2] }
   const { id: _id, createdAt: _c, updatedAt: _u, ...rest } = envelope
   return rest
 }
@@ -77,15 +75,10 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value as EnvelopeType })}
-              disabled={isEdit && envelope?.isBuiltIn}
-              className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink outline-none focus:border-yellow transition-colors disabled:opacity-50"
+              className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink outline-none focus:border-yellow transition-colors"
             >
               {TYPES.map((t) => (
-                <option key={t.value} value={t.value} disabled={
-                  !isEdit && (t.value === 'spending' || t.value === 'reserve')
-                }>
-                  {t.label}
-                </option>
+                <option key={t.value} value={t.value}>{t.label}</option>
               ))}
             </select>
           </div>

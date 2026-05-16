@@ -34,7 +34,7 @@ export default function Layout({ children }: Props) {
                   className={({ isActive }) =>
                     `px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer ${
                       isActive
-                        ? 'bg-yellow/15 text-yellow font-medium'
+                        ? 'bg-link/10 text-link font-medium'
                         : 'text-muted hover:text-ink hover:bg-elevated'
                     }`
                   }
@@ -67,7 +67,7 @@ export default function Layout({ children }: Props) {
             to={item.to}
             className={({ isActive }) =>
               `flex flex-col items-center gap-0.5 px-4 py-1 text-xs transition-colors cursor-pointer ${
-                isActive ? 'text-yellow' : 'text-muted hover:text-ink'
+                isActive ? 'text-link' : 'text-muted hover:text-ink'
               }`
             }
           >

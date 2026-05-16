@@ -23,11 +23,7 @@ export const useEnvelopeStore = create<EnvelopeState>((set) => ({
     if (!user) return
     set({ loading: true, error: null })
     try {
-      let envelopes = await service.fetchEnvelopes(user.uid)
-      if (envelopes.length === 0) {
-        await service.ensureBuiltInEnvelopes(user.uid)
-        envelopes = await service.fetchEnvelopes(user.uid)
-      }
+      const envelopes = await service.fetchEnvelopes(user.uid)
       set({ envelopes, loading: false })
     } catch (e) {
       set({ loading: false, error: 'Ошибка загрузки конвертов' })
@@ -40,6 +36,11 @@ export const useEnvelopeStore = create<EnvelopeState>((set) => ({
     if (!user) return
     if (data.type === 'spending' || data.type === 'reserve') {
       set({ error: 'ХаниМани и Резервы создаются автоматически' })
+      return
+    }
+    const userCount = useEnvelopeStore.getState().envelopes.filter((e) => !e.isBuiltIn).length
+    if (userCount >= 20) {
+      set({ error: 'Достигнут лимит конвертов (20). Удалите неиспользуемые.' })
       return
     }
     set({ error: null })

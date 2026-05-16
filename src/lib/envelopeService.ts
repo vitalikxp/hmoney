@@ -17,7 +17,7 @@ function envelopesRef(userId: string) {
 }
 
 export async function fetchEnvelopes(userId: string): Promise<Envelope[]> {
-  const q = query(envelopesRef(userId), orderBy('sortOrder'))
+  const q = query(envelopesRef(userId), orderBy('createdAt'))
   const snapshot = await getDocs(q)
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Envelope))
 }

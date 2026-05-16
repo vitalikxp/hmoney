@@ -58,16 +58,6 @@ export default function EnvelopesPage() {
 
       {loading ? (
         <div className="text-center py-12 text-muted">Загрузка…</div>
-      ) : envelopes.length === 0 ? (
-        <div className="text-center py-12 border border-dashed border-hairline rounded-xl">
-          <p className="text-muted mb-4">У вас пока нет конвертов</p>
-          <button
-            onClick={openCreate}
-            className="px-4 py-2 text-sm font-medium bg-yellow text-black rounded-lg hover:brightness-110 transition-all cursor-pointer"
-          >
-            Создать первый конверт
-          </button>
-        </div>
       ) : (
         <EnvelopeList
           envelopes={envelopes}
