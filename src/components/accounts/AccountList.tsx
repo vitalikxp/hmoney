@@ -34,7 +34,7 @@ export default function AccountList({ accounts, onEdit, onDelete }: Props) {
     <div className="space-y-3">
       <div className="flex items-center justify-between px-1">
         <span className="text-sm text-muted">Всего</span>
-        <span className="text-sm font-mono text-ink">{total.toLocaleString()}₽</span>
+        <span className="text-sm font-mono text-ink">{total.toLocaleString('ru-RU')}₽</span>
       </div>
       {grouped.map((g) => (
         <AccountGroup key={g.label} {...g} onEdit={onEdit} onDelete={onDelete} />

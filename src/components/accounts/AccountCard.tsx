@@ -28,13 +28,13 @@ export default function AccountCard({ account, onEdit, onDelete }: Props) {
         </div>
         {avail != null && (
           <div className="text-xs text-muted mt-0.5">
-            {avail.toLocaleString()}₽ доступно из {account.creditLimit!.toLocaleString()}₽
+            {avail.toLocaleString('ru-RU')}₽ доступно из {account.creditLimit!.toLocaleString('ru-RU')}₽
           </div>
         )}
       </div>
       <div className="text-right shrink-0">
         <div className={`font-mono font-medium ${account.balance < 0 ? 'text-rose' : account.balance > 0 ? 'text-emerald' : 'text-muted'}`}>
-          {account.balance.toLocaleString()}₽
+          {account.balance.toLocaleString('ru-RU')}₽
         </div>
       </div>
       <div className="flex gap-1 shrink-0 ml-2">

@@ -22,7 +22,7 @@ export default function AccountGroup({ label, accounts, total, onEdit, onDelete 
         className="w-full flex items-center justify-between px-4 py-2.5 bg-elevated/50 hover:bg-elevated transition-colors cursor-pointer"
       >
         <span className="text-sm font-semibold text-ink">{label}</span>
-        <span className="text-sm font-mono text-muted">{total.toLocaleString()}₽</span>
+        <span className="text-sm font-mono text-muted">{total.toLocaleString('ru-RU')}₽</span>
       </button>
       {!collapsed && accounts.map((a) => (
         <AccountCard key={a.id} account={a} onEdit={onEdit} onDelete={onDelete} />
