@@ -51,6 +51,7 @@ describe('accountStore', () => {
     })
 
     it('sets error on failure', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
       mockService.fetchAccounts.mockRejectedValueOnce(new Error('fail'))
       await useAccountStore.getState().fetchAccounts()
       expect(useAccountStore.getState().error).toBe('Ошибка загрузки счетов')
@@ -76,6 +77,7 @@ describe('accountStore', () => {
     })
 
     it('sets error on failure', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
       mockService.createAccount.mockRejectedValueOnce(new Error('fail'))
       await useAccountStore.getState().createAccount({ name: 'New', balance: 0, includeInBalance: true, currency: 'RUB', group: 'default', sortOrder: 0 })
       expect(useAccountStore.getState().error).toBe('Ошибка создания счёта')
@@ -94,6 +96,7 @@ describe('accountStore', () => {
     })
 
     it('sets error on failure', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
       mockService.updateAccount.mockRejectedValueOnce(new Error('fail'))
       await useAccountStore.getState().updateAccount('a1', { name: 'x' })
       expect(useAccountStore.getState().error).toBe('Ошибка обновления счёта')
@@ -112,6 +115,7 @@ describe('accountStore', () => {
     })
 
     it('sets error on failure', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
       mockService.deleteAccount.mockRejectedValueOnce(new Error('fail'))
       await useAccountStore.getState().deleteAccount('a1')
       expect(useAccountStore.getState().error).toBe('Ошибка удаления счёта')
