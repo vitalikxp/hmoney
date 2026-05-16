@@ -16,17 +16,10 @@ const TYPES: Array<{ value: EnvelopeType; label: string }> = [
   { value: 'goal', label: 'Цели' },
 ]
 
-function toInput(envelope: Envelope | null): CreateEnvelopeInput & { id?: string } {
-  return envelope
-    ? { ...envelope }
-    : {
-        name: '',
-        type: 'spending',
-        balance: 0,
-        sortOrder: 0,
-        isHidden: false,
-        icon: ICONS[0],
-      }
+function toInput(envelope: Envelope | null): CreateEnvelopeInput {
+  if (!envelope) return { name: '', type: 'fund', balance: 0, sortOrder: 0, isHidden: false, icon: ICONS[0] }
+  const { id: _id, createdAt: _c, updatedAt: _u, ...rest } = envelope
+  return rest
 }
 
 export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
@@ -84,10 +77,15 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value as EnvelopeType })}
-              className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink outline-none focus:border-yellow transition-colors"
+              disabled={isEdit && envelope?.isBuiltIn}
+              className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink outline-none focus:border-yellow transition-colors disabled:opacity-50"
             >
               {TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
+                <option key={t.value} value={t.value} disabled={
+                  !isEdit && (t.value === 'spending' || t.value === 'reserve')
+                }>
+                  {t.label}
+                </option>
               ))}
             </select>
           </div>

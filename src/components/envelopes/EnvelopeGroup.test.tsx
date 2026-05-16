@@ -40,11 +40,15 @@ describe('EnvelopeGroup', () => {
     expect(screen.getByText('(2)')).toBeInTheDocument()
   })
 
-  it('returns null when no envelopes', () => {
+  it('renders header even when no envelopes', () => {
     const { container } = render(
       <EnvelopeGroup type="spending" envelopes={[]} onEdit={vi.fn()} onDelete={vi.fn()} />,
     )
-    expect(container.firstChild).toBeNull()
+    const header = container.querySelector('button')
+    expect(header).toHaveTextContent('ХаниМани')
+    expect(header).toHaveTextContent('(0)')
+    // Не должно быть EnvelopeCard (edit кнопки)
+    expect(container.querySelector('button[title="Редактировать"]')).toBeNull()
   })
 
   it('toggles collapse on header click', async () => {

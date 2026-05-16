@@ -38,6 +38,7 @@ hmoney — SPA на React, развёрнутое на GitHub Pages.
 9. **Категории — строка, не справочник** — свободное текстовое поле на транзакции
 10. **Модальные формы** — все CRUD-формы (счёт, транзакция) через модалы, не инлайн-панели
 11. **Тестирование: Vitest + Testing Library** — без ESLint/Biome, только `tsc -b` + `npm test`; моки на уровне модулей (Firebase), stores/Zustand через `vi.hoisted()`
+12. **E2E: Playwright** — два проекта (local + production); Page Object Model; очистка тестовых пользователей через Firebase Admin SDK
 
 ## Разделы
 - [Обоснование стека](./Стек.md)

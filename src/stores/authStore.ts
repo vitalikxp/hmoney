@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
+import * as envelopeService from '../lib/envelopeService'
 
 interface AuthState {
   user: User | null
@@ -34,6 +35,7 @@ export const useAuthStore = create<AuthState>(() => ({
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       })
+      await envelopeService.ensureBuiltInEnvelopes(cred.user.uid)
     } catch {
       useAuthStore.setState({ user: null })
       try { await deleteUser(cred.user) } catch (e) { console.error('Failed to delete orphaned auth user', e) }

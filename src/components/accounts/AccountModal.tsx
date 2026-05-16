@@ -16,18 +16,10 @@ const GROUPS: Array<{ value: Account['group']; label: string }> = [
   { value: 'default', label: 'Прочие' },
 ]
 
-function toInput(account: Account | null): CreateAccountInput & { id?: string } {
-  return account
-    ? { ...account, creditLimit: account.creditLimit ?? undefined }
-    : {
-        name: '',
-        balance: 0,
-        includeInBalance: true,
-        currency: 'RUB',
-        group: 'favorites',
-        sortOrder: 0,
-        icon: ICONS[0],
-      }
+function toInput(account: Account | null): CreateAccountInput {
+  if (!account) return { name: '', balance: 0, includeInBalance: true, currency: 'RUB', group: 'favorites', sortOrder: 0, icon: ICONS[0] }
+  const { id: _id, createdAt: _c, updatedAt: _u, ...rest } = account
+  return { ...rest, creditLimit: account.creditLimit ?? undefined }
 }
 
 export default function AccountModal({ account, onSubmit, onClose }: Props) {

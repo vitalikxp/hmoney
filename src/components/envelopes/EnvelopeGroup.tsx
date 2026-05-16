@@ -13,8 +13,6 @@ interface Props {
 export default function EnvelopeGroup({ type, envelopes, onEdit, onDelete }: Props) {
   const [collapsed, setCollapsed] = useState(false)
 
-  if (envelopes.length === 0) return null
-
   const total = envelopes.reduce((s, e) => s + e.balance, 0)
 
   return (

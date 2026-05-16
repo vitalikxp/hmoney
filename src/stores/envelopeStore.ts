@@ -23,7 +23,11 @@ export const useEnvelopeStore = create<EnvelopeState>((set) => ({
     if (!user) return
     set({ loading: true, error: null })
     try {
-      const envelopes = await service.fetchEnvelopes(user.uid)
+      let envelopes = await service.fetchEnvelopes(user.uid)
+      if (envelopes.length === 0) {
+        await service.ensureBuiltInEnvelopes(user.uid)
+        envelopes = await service.fetchEnvelopes(user.uid)
+      }
       set({ envelopes, loading: false })
     } catch (e) {
       set({ loading: false, error: 'Ошибка загрузки конвертов' })
@@ -34,6 +38,10 @@ export const useEnvelopeStore = create<EnvelopeState>((set) => ({
   createEnvelope: async (data) => {
     const user = useAuthStore.getState().user
     if (!user) return
+    if (data.type === 'spending' || data.type === 'reserve') {
+      set({ error: 'ХаниМани и Резервы создаются автоматически' })
+      return
+    }
     set({ error: null })
     try {
       await service.createEnvelope(user.uid, data)
@@ -47,6 +55,11 @@ export const useEnvelopeStore = create<EnvelopeState>((set) => ({
   updateEnvelope: async (id, data) => {
     const user = useAuthStore.getState().user
     if (!user) return
+    const envelope = useEnvelopeStore.getState().envelopes.find((e) => e.id === id)
+    if (envelope?.isBuiltIn && data.type && data.type !== envelope.type) {
+      set({ error: 'Тип встроенного конверта нельзя изменить' })
+      return
+    }
     set({ error: null })
     try {
       await service.updateEnvelope(user.uid, id, data)
@@ -60,6 +73,11 @@ export const useEnvelopeStore = create<EnvelopeState>((set) => ({
   deleteEnvelope: async (id) => {
     const user = useAuthStore.getState().user
     if (!user) return
+    const envelope = useEnvelopeStore.getState().envelopes.find((e) => e.id === id)
+    if (envelope?.isBuiltIn) {
+      set({ error: 'Встроенный конверт нельзя удалить' })
+      return
+    }
     set({ error: null })
     try {
       await service.deleteEnvelope(user.uid, id)

@@ -28,7 +28,7 @@ export default defineConfig({
     },
     {
       name: 'production',
-      testIgnore: ['**/accounts.spec.ts'],
+      testIgnore: ['**/accounts.spec.ts', '**/envelopes.spec.ts'],
       use: {
         ...devices['Desktop Chrome'],
         baseURL: 'https://money.vitalik.dev',

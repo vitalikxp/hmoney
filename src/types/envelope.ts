@@ -9,6 +9,7 @@ export interface Envelope {
   balance: number
   target?: number
   icon?: string
+  isBuiltIn?: boolean
   sortOrder: number
   isHidden: boolean
   createdAt: Timestamp

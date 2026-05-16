@@ -46,13 +46,15 @@ export default function EnvelopeCard({ envelope, onEdit, onDelete }: Props) {
         >
           ✎
         </button>
-        <button
-          onClick={() => onDelete(envelope)}
-          className="p-1.5 text-muted hover:text-rose hover:bg-elevated rounded transition-colors cursor-pointer"
-          title="Удалить"
-        >
-          🗑
-        </button>
+        {!envelope.isBuiltIn && (
+          <button
+            onClick={() => onDelete(envelope)}
+            className="p-1.5 text-muted hover:text-rose hover:bg-elevated rounded transition-colors cursor-pointer"
+            title="Удалить"
+          >
+            🗑
+          </button>
+        )}
       </div>
     </div>
   )

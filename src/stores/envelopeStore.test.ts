@@ -18,6 +18,7 @@ const { mockService } = vi.hoisted(() => ({
     createEnvelope: vi.fn(),
     updateEnvelope: vi.fn(),
     deleteEnvelope: vi.fn(),
+    ensureBuiltInEnvelopes: vi.fn(),
   },
 }))
 
@@ -63,6 +64,20 @@ describe('envelopeStore', () => {
       await useEnvelopeStore.getState().fetchEnvelopes()
       expect(mockService.fetchEnvelopes).not.toHaveBeenCalled()
     })
+
+    it('вызывает ensureBuiltInEnvelopes если список пуст', async () => {
+      const mockEnvelopes = [createMockEnvelope()]
+      mockService.fetchEnvelopes
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce(mockEnvelopes)
+      mockService.ensureBuiltInEnvelopes.mockResolvedValueOnce(undefined)
+
+      await useEnvelopeStore.getState().fetchEnvelopes()
+
+      expect(mockService.ensureBuiltInEnvelopes).toHaveBeenCalledWith('test-uid')
+      expect(mockService.fetchEnvelopes).toHaveBeenCalledTimes(2)
+      expect(useEnvelopeStore.getState().envelopes).toEqual(mockEnvelopes)
+    })
   })
 
   describe('createEnvelope', () => {
@@ -70,7 +85,7 @@ describe('envelopeStore', () => {
       mockService.createEnvelope.mockResolvedValueOnce('new-id')
       mockService.fetchEnvelopes.mockResolvedValueOnce([createMockEnvelope()])
 
-      await useEnvelopeStore.getState().createEnvelope({ name: 'New', type: 'spending', balance: 0, sortOrder: 0, isHidden: false })
+      await useEnvelopeStore.getState().createEnvelope({ name: 'New', type: 'fund', balance: 0, sortOrder: 0, isHidden: false })
 
       expect(mockService.createEnvelope).toHaveBeenCalledWith('test-uid', expect.objectContaining({ name: 'New' }))
       expect(mockService.fetchEnvelopes).toHaveBeenCalledAfter(mockService.createEnvelope)
@@ -79,12 +94,32 @@ describe('envelopeStore', () => {
     it('sets error on failure', async () => {
       vi.spyOn(console, 'error').mockImplementation(() => {})
       mockService.createEnvelope.mockRejectedValueOnce(new Error('fail'))
-      await useEnvelopeStore.getState().createEnvelope({ name: 'New', type: 'spending', balance: 0, sortOrder: 0, isHidden: false })
+      await useEnvelopeStore.getState().createEnvelope({ name: 'New', type: 'fund', balance: 0, sortOrder: 0, isHidden: false })
       expect(useEnvelopeStore.getState().error).toBe('Ошибка создания конверта')
+    })
+
+    it('does not allow creating spending/reserve envelope', async () => {
+      await useEnvelopeStore.getState().createEnvelope({ name: 'Fix', type: 'spending', balance: 0, sortOrder: 0, isHidden: false })
+      expect(mockService.createEnvelope).not.toHaveBeenCalled()
+      expect(useEnvelopeStore.getState().error).toBe('ХаниМани и Резервы создаются автоматически')
+      await useEnvelopeStore.getState().createEnvelope({ name: 'Fix', type: 'reserve', balance: 0, sortOrder: 0, isHidden: false })
+      expect(mockService.createEnvelope).not.toHaveBeenCalled()
+      expect(useEnvelopeStore.getState().error).toBe('ХаниМани и Резервы создаются автоматически')
     })
   })
 
   describe('updateEnvelope', () => {
+    it('does not allow changing type of built-in envelope', async () => {
+      useEnvelopeStore.setState({
+        envelopes: [createMockEnvelope({ id: 'built', isBuiltIn: true, type: 'spending' })],
+        loading: false,
+        error: null,
+      })
+      await useEnvelopeStore.getState().updateEnvelope('built', { type: 'fund' })
+      expect(mockService.updateEnvelope).not.toHaveBeenCalled()
+      expect(useEnvelopeStore.getState().error).toBe('Тип встроенного конверта нельзя изменить')
+    })
+  
     it('calls service and refetches', async () => {
       mockService.updateEnvelope.mockResolvedValueOnce(undefined)
       mockService.fetchEnvelopes.mockResolvedValueOnce([createMockEnvelope()])
@@ -119,6 +154,17 @@ describe('envelopeStore', () => {
       mockService.deleteEnvelope.mockRejectedValueOnce(new Error('fail'))
       await useEnvelopeStore.getState().deleteEnvelope('e1')
       expect(useEnvelopeStore.getState().error).toBe('Ошибка удаления конверта')
+    })
+
+    it('does not allow deleting built-in envelope', async () => {
+      useEnvelopeStore.setState({
+        envelopes: [createMockEnvelope({ id: 'built', isBuiltIn: true })],
+        loading: false,
+        error: null,
+      })
+      await useEnvelopeStore.getState().deleteEnvelope('built')
+      expect(mockService.deleteEnvelope).not.toHaveBeenCalled()
+      expect(useEnvelopeStore.getState().error).toBe('Встроенный конверт нельзя удалить')
     })
   })
 })

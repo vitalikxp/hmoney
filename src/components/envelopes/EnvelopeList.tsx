@@ -9,19 +9,34 @@ interface Props {
 }
 
 export default function EnvelopeList({ envelopes, onEdit, onDelete }: Props) {
-  if (envelopes.length === 0) return null
-
   return (
     <div className="space-y-3">
-      {TYPE_ORDER.map((t) => (
-        <EnvelopeGroup
-          key={t}
-          type={t}
-          envelopes={envelopes.filter((e) => e.type === t)}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
+      {TYPE_ORDER.map((t) => {
+        const groupEnvs = envelopes.filter((e) => e.type === t)
+        if (t === 'spending' || t === 'reserve') {
+          return (
+            <EnvelopeGroup
+              key={t}
+              type={t}
+              envelopes={groupEnvs}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          )
+        }
+        if (groupEnvs.length > 0) {
+          return (
+            <EnvelopeGroup
+              key={t}
+              type={t}
+              envelopes={groupEnvs}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          )
+        }
+        return null
+      })}
     </div>
   )
 }

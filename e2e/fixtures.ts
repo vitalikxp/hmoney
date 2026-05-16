@@ -3,12 +3,16 @@ import { LoginPage } from './models/LoginPage'
 import { RegisterPage } from './models/RegisterPage'
 import { AccountsPage } from './models/AccountsPage'
 import { AccountModal } from './models/AccountModal'
+import { EnvelopesPage } from './models/EnvelopesPage'
+import { EnvelopeModal } from './models/EnvelopeModal'
 
 export type MyFixtures = {
   loginPage: LoginPage
   registerPage: RegisterPage
   accountsPage: AccountsPage
   accountModal: AccountModal
+  envelopesPage: EnvelopesPage
+  envelopeModal: EnvelopeModal
 }
 
 export const test = base.extend<MyFixtures>({
@@ -27,6 +31,14 @@ export const test = base.extend<MyFixtures>({
   accountModal: async ({ page }, use) => {
     const accountModal = new AccountModal(page)
     await use(accountModal)
+  },
+  envelopesPage: async ({ page }, use) => {
+    const envelopesPage = new EnvelopesPage(page)
+    await use(envelopesPage)
+  },
+  envelopeModal: async ({ page }, use) => {
+    const envelopeModal = new EnvelopeModal(page)
+    await use(envelopeModal)
   },
 })
 

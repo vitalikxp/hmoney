@@ -6,6 +6,27 @@ status: updated
 
 # Журнал изменений
 
+## [2026-05-16] аудит | Аудит wiki — 5 проблем исправлено
+
+- Данные.md: убрана пометка ⚠️ «Не реализовано» перед моделью Envelope (реализована)
+- Компоненты.md: добавлены маршруты /register и /envelopes; EnvelopeForm → EnvelopeModal; ✅ для EnvelopesPage, EnvelopeList, EnvelopeGroup, EnvelopeCard, EnvelopeModal
+- log.md: заголовок `# Журнал изменений` перемещён в начало файла (был на строке 21)
+- index.md: Unit-тестов 76→138, E2E 17→23 (18 local + 5 production), 26-е обновление
+- Архитектура/index.md: добавлено решение #12 (Playwright E2E)
+
+## [2026-05-16] конверты | Фиксированные ХаниМани и Резервы, isBuiltIn, вики-справка
+
+- Источники: добавлена «Справка ХаниМани — виртуальные счета» (из справки hm)
+- Данные.md: Envelope — добавлен `isBuiltIn`, таблица типов с колонкой «Фиксированный»
+- ФТ.md: EN-01, EN-02, EN-04 уточнены (ХаниМани/Резервы — built-in, не создаются/не удаляются)
+- Envelope: добавлен `isBuiltIn` в тип
+- envelopeService: ensureBuiltInEnvelopes() — автосоздание при регистрации и первом fetch
+- authStore: при регистрации создаются ХаниМани и Резервы
+- envelopeStore: create/delete блокируются для built-in
+- EnvelopeCard: скрыта кнопка удаления для built-in
+- EnvelopeModal: создание только fund/goal; редактирование built-in — без смены типа
+- EnvelopeList: ХаниМани и Резервы всегда отображаются (группы не скрываются)
+
 ## [2026-05-16] аудит | Исправление env-префикса, удаление GITHUB_TOKEN
 - Аутентификация.md: `VITE_FIREBASE_*` → `FIREBASE_*` (соответствие реальному .env)
 - index.md: добавлена ссылка на E2E-секцию AGENTS.md, счётчик 24

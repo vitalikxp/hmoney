@@ -23,9 +23,13 @@ describe('EnvelopeList', () => {
     expect(screen.getByRole('button', { name: /Цели/ })).toBeInTheDocument()
   })
 
-  it('returns null when no envelopes', () => {
-    const { container } = renderList([])
-    expect(container.firstChild).toBeNull()
+  it('always renders built-in groups, even if envelopes is empty', () => {
+    renderList([])
+    // Ожидаем группы "ХаниМани" и "Резервы" всегда есть
+    expect(screen.getByRole('button', { name: /ХаниМани/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Резервы/ })).toBeInTheDocument()
+    // Не должно быть ни одной EnvelopeCard (нет edit)
+    expect(screen.queryByTitle('Редактировать')).not.toBeInTheDocument()
   })
 
   it('passes onEdit and onDelete to child cards', () => {

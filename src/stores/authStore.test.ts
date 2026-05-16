@@ -25,6 +25,10 @@ vi.mock('firebase/firestore', () => ({
   serverTimestamp: vi.fn(() => null),
 }))
 
+vi.mock('../lib/envelopeService', () => ({
+  ensureBuiltInEnvelopes: vi.fn(),
+}))
+
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, deleteUser } from 'firebase/auth'
 import { setDoc } from 'firebase/firestore'
 import { useAuthStore } from '../stores/authStore'

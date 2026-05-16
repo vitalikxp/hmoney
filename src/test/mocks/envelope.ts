@@ -7,6 +7,7 @@ export function createMockEnvelope(overrides?: Partial<Envelope>): Envelope {
     type: 'spending',
     balance: 5000,
     icon: '🧃',
+    isBuiltIn: false,
     sortOrder: 0,
     isHidden: false,
     createdAt: { seconds: 0, nanoseconds: 0 } as Envelope['createdAt'],
