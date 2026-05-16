@@ -1,6 +1,5 @@
 import 'dotenv/config'
 import admin from 'firebase-admin'
-import { read, clear } from './record.js'
 import { writeFileSync, unlinkSync, existsSync } from 'fs'
 import { tmpdir } from 'os'
 import { join, dirname, resolve } from 'path'
@@ -34,34 +33,42 @@ if (SERVICE_ACCOUNT) {
 
 admin.initializeApp({ credential })
 
-async function main() {
-  const emails = read()
-  if (emails.length === 0) {
-    console.log('Нет пользователей для очистки')
-    return
-  }
+const EMAIL_DOMAIN = '@vitalik.dev'
 
+async function main() {
   let deleted = 0
   let errors = 0
 
-  for (const email of emails) {
+  const { users } = await admin.auth().listUsers(1000)
+
+  for (const user of users) {
+    const email = user.email ?? ''
+    if (!email.endsWith(EMAIL_DOMAIN)) continue
+
+    let ok = false
+
     try {
-      const user = await admin.auth().getUserByEmail(email)
       await admin.firestore().recursiveDelete(admin.firestore().collection('users').doc(user.uid))
+      ok = true
+    } catch (e: any) {
+      console.error(`  ✗ ${email}: Firestore — ${e.message}`)
+      errors++
+    }
+
+    try {
       await admin.auth().deleteUser(user.uid)
+      ok = true
+    } catch (e: any) {
+      console.error(`  ✗ ${email}: Auth — ${e.message}`)
+      errors++
+    }
+
+    if (ok) {
       deleted++
       console.log(`  ✓ ${email}`)
-    } catch (e: any) {
-      if (e.code === 'auth/user-not-found') {
-        deleted++
-      } else {
-        console.error(`  ✗ ${email}: ${e.message}`)
-        errors++
-      }
     }
   }
 
-  clear()
   console.log(`\nУдалено ${deleted} пользователей${errors ? `, ошибок: ${errors}` : ''}`)
 }
 

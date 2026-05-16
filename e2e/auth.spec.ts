@@ -2,7 +2,6 @@ import { expect } from '@playwright/test'
 import { test } from './fixtures'
 import { RegisterPage } from './models/RegisterPage'
 import { LoginPage } from './models/LoginPage'
-import { record } from './record'
 
 const TEST_EMAIL = `test-${Date.now()}@vitalik.dev`
 const TEST_PASSWORD = 'Pa$$w0rd'
@@ -24,7 +23,6 @@ test.describe('Аутентификация', () => {
     await registerPage.goto()
     await registerPage.register(TEST_EMAIL, TEST_PASSWORD)
     await expect(page.getByText(TEST_EMAIL)).toBeVisible()
-    record(TEST_EMAIL)
 
     await page.getByRole('button', { name: /выйти/i }).click()
     await expect(page).toHaveURL(/\/login/)

@@ -301,8 +301,7 @@ Firebase Auth хранит сессию в IndexedDB. Playwright не умеет
 Каждый тест создаёт нового пользователя через регистрацию. После прогона пользователи удаляются через Firebase Admin SDK.
 
 **Утилиты:**
-- `e2e/record.ts` — записывает email'ы тестовых пользователей в `e2e/test-users.json` (`.gitignore`)
-- `e2e/cleanup.ts` — читает `test-users.json`, удаляет пользователя из Auth и Firestore (рекурсивно)
+- `e2e/cleanup.ts` — получает всех пользователей из Auth через Admin SDK, фильтрует по домену `@vitalik.dev`, удаляет из Firestore + Auth (рекурсивно)
 
 **Команды:**
 | Команда | Описание |
@@ -315,13 +314,12 @@ Firebase Auth хранит сессию в IndexedDB. Playwright не умеет
 - Сервисный аккаунт также может лежать в `firebase.private.json` (проектный корень, `.gitignore`) — cleanup.ts загружает его оттуда, если `FIREBASE_SERVICE_ACCOUNT` не задан
 
 **Как работает:**
-1. Тест вызывает `record(email)` после успешной регистрации
-2. Email сохраняется в `e2e/test-users.json`
-3. `cleanup.ts` проходит по списку, для каждого email:
-   - Ищет пользователя в Auth
-   - Удаляет `users/{uid}` рекурсивно (документ + подколлекции)
+1. `cleanup.ts` запрашивает всех пользователей Firebase Auth через `listUsers(1000)`
+2. Фильтрует по домену `@vitalik.dev` (все тестовые учётки, включая статическую `test@vitalik.dev`)
+3. Для каждого совпадения:
+   - Удаляет `users/{uid}` рекурсивно из Firestore (документ + подколлекции)
    - Удаляет пользователя из Auth
-4. После очистки `test-users.json` обнуляется
+4. Файловый список (`test-users.json`) больше не используется — cleanup находит всех пользователей по домену
 
 ### CI
 

@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test'
 import { test } from './fixtures'
 import { RegisterPage } from './models/RegisterPage'
-import { record } from './record'
 
 const PASSWORD = 'Pa$$w0rd'
 
@@ -11,7 +10,6 @@ async function registerAndLogin(page: import('@playwright/test').Page): Promise<
   await registerPage.goto()
   await registerPage.register(email, PASSWORD)
   await expect(page.getByText(email)).toBeVisible()
-  record(email)
   return email
 }
 
