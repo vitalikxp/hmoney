@@ -23,8 +23,7 @@ export async function fetchEnvelopes(userId: string): Promise<Envelope[]> {
 }
 
 const BUILT_IN_ENVELOPES: Array<{ name: string; type: EnvelopeType; icon: string; sortOrder: number }> = [
-  { name: 'ХаниМани', type: 'spending', icon: '🧃', sortOrder: 0 },
-  { name: 'Резервы', type: 'reserve', icon: '🛡️', sortOrder: 1 },
+  { name: 'Резервы', type: 'reserve', icon: '🛡️', sortOrder: 0 },
 ]
 
 export async function ensureBuiltInEnvelopes(userId: string): Promise<void> {

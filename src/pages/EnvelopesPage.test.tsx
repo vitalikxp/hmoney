@@ -3,13 +3,18 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createMockEnvelope } from '../test/mocks/envelope'
+import { createMockAccount } from '../test/mocks/account'
 
-const { mockLogout, mockFetchEnvelopes, mockCreateEnvelope, mockUpdateEnvelope, mockDeleteEnvelope, mockUseAuthStore, mockUseEnvelopeStore } = vi.hoisted(() => ({
+const {
+  mockLogout, mockFetchEnvelopes, mockCreateEnvelope, mockUpdateEnvelope, mockDeleteEnvelope,
+  mockFetchAccounts, mockUseAuthStore, mockUseEnvelopeStore, mockUseAccountStore,
+} = vi.hoisted(() => ({
   mockLogout: vi.fn(),
   mockFetchEnvelopes: vi.fn(),
   mockCreateEnvelope: vi.fn(),
   mockUpdateEnvelope: vi.fn(),
   mockDeleteEnvelope: vi.fn(),
+  mockFetchAccounts: vi.fn(),
   mockUseAuthStore: vi.fn(() => ({
     user: { email: 'test@test.com' },
     logout: mockLogout,
@@ -23,20 +28,21 @@ const { mockLogout, mockFetchEnvelopes, mockCreateEnvelope, mockUpdateEnvelope, 
     updateEnvelope: mockUpdateEnvelope,
     deleteEnvelope: mockDeleteEnvelope,
   })),
+  mockUseAccountStore: vi.fn(() => ({
+    accounts: [createMockAccount({ balance: 100000, includeInBalance: true })],
+    fetchAccounts: mockFetchAccounts,
+  })),
 }))
 
 vi.mock('../stores/authStore', () => ({ useAuthStore: mockUseAuthStore }))
 vi.mock('../stores/envelopeStore', () => ({ useEnvelopeStore: mockUseEnvelopeStore }))
+vi.mock('../stores/accountStore', () => ({ useAccountStore: mockUseAccountStore }))
 
 vi.mock('../components/envelopes/EnvelopeModal', () => ({
   default: ({ onSubmit, onClose }: { onSubmit: () => void; onClose: () => void }) => (
     <div data-testid="envelope-modal">
-      <button onClick={() => onSubmit().then(onClose)} data-testid="modal-submit">
-        Submit
-      </button>
-      <button onClick={onClose} data-testid="modal-close">
-        Close
-      </button>
+      <button onClick={() => onSubmit().then(onClose)} data-testid="modal-submit">Submit</button>
+      <button onClick={onClose} data-testid="modal-close">Close</button>
     </div>
   ),
 }))
@@ -44,24 +50,34 @@ vi.mock('../components/envelopes/EnvelopeModal', () => ({
 import EnvelopesPage from './EnvelopesPage'
 
 function renderPage() {
-  return render(
-    <MemoryRouter>
-      <EnvelopesPage />
-    </MemoryRouter>,
-  )
+  return render(<MemoryRouter><EnvelopesPage /></MemoryRouter>)
 }
 
 describe('EnvelopesPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockUseAccountStore.mockReturnValue({
+      accounts: [createMockAccount({ balance: 100000, includeInBalance: true })],
+      fetchAccounts: mockFetchAccounts,
+    })
+    mockUseEnvelopeStore.mockReturnValue({
+      envelopes: [],
+      loading: false,
+      error: null,
+      fetchEnvelopes: mockFetchEnvelopes,
+      createEnvelope: mockCreateEnvelope,
+      updateEnvelope: mockUpdateEnvelope,
+      deleteEnvelope: mockDeleteEnvelope,
+    })
   })
 
-  it('fetches envelopes on mount', () => {
+  it('загружает конверты и счета при монтировании', () => {
     renderPage()
     expect(mockFetchEnvelopes).toHaveBeenCalledTimes(1)
+    expect(mockFetchAccounts).toHaveBeenCalledTimes(1)
   })
 
-  it('shows loading state', () => {
+  it('показывает состояние загрузки', () => {
     mockUseEnvelopeStore.mockReturnValueOnce({
       envelopes: [], loading: true, error: null, fetchEnvelopes: mockFetchEnvelopes,
       createEnvelope: mockCreateEnvelope, updateEnvelope: mockUpdateEnvelope, deleteEnvelope: mockDeleteEnvelope,
@@ -70,7 +86,7 @@ describe('EnvelopesPage', () => {
     expect(screen.getByText('Загрузка…')).toBeInTheDocument()
   })
 
-  it('shows error message', () => {
+  it('показывает сообщение об ошибке', () => {
     mockUseEnvelopeStore.mockReturnValueOnce({
       envelopes: [], loading: false, error: 'Ошибка', fetchEnvelopes: mockFetchEnvelopes,
       createEnvelope: mockCreateEnvelope, updateEnvelope: mockUpdateEnvelope, deleteEnvelope: mockDeleteEnvelope,
@@ -79,31 +95,39 @@ describe('EnvelopesPage', () => {
     expect(screen.getByText('Ошибка')).toBeInTheDocument()
   })
 
-  it('renders envelopes list', () => {
+  it('показывает виджет BudgetSummary с корректными значениями', () => {
+    // 100k счёт, 20k резервы, 30k фонд → ХаниМани = 50k, Всего = 100k
     mockUseEnvelopeStore.mockReturnValueOnce({
-      envelopes: [createMockEnvelope({ name: 'Продукты' })],
+      envelopes: [
+        createMockEnvelope({ type: 'reserve', balance: 20000 }),
+        createMockEnvelope({ type: 'fund', balance: 30000 }),
+      ],
       loading: false, error: null, fetchEnvelopes: mockFetchEnvelopes,
       createEnvelope: mockCreateEnvelope, updateEnvelope: mockUpdateEnvelope, deleteEnvelope: mockDeleteEnvelope,
     })
     renderPage()
-    expect(screen.getByText('Продукты')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /ХаниМани/ })).toBeInTheDocument()
+    expect(screen.getByText('ХаниМани')).toBeInTheDocument()
+    expect(screen.getByText('Резервы')).toBeInTheDocument()
+    expect(screen.getByText('Накопления')).toBeInTheDocument()
+    expect(screen.getByText('Всего')).toBeInTheDocument()
+    expect(screen.getByText('50 000₽')).toBeInTheDocument()  // ХаниМани
+    expect(screen.getByText('100 000₽')).toBeInTheDocument() // Всего
   })
 
-  it('shows user email and logout button', () => {
+  it('показывает email и кнопку выхода', () => {
     renderPage()
     expect(screen.getByText('test@test.com')).toBeInTheDocument()
     expect(screen.getByText('Выйти')).toBeInTheDocument()
   })
 
-  it('calls logout on logout click', async () => {
+  it('вызывает logout при клике на Выйти', async () => {
     const user = userEvent.setup()
     renderPage()
     await user.click(screen.getByText('Выйти'))
     expect(mockLogout).toHaveBeenCalledTimes(1)
   })
 
-  it('opens modal on create button click', async () => {
+  it('открывает модал при клике + Создать', async () => {
     const user = userEvent.setup()
     renderPage()
     await user.click(screen.getByText('+ Создать'))
@@ -119,7 +143,7 @@ describe('EnvelopesPage', () => {
     expect(mockCreateEnvelope).toHaveBeenCalled()
   })
 
-  it('closes modal on close', async () => {
+  it('закрывает модал по кнопке Close', async () => {
     const user = userEvent.setup()
     renderPage()
     await user.click(screen.getByText('+ Создать'))

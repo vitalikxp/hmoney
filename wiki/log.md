@@ -6,6 +6,26 @@ status: updated
 
 # Журнал изменений
 
+## [2026-05-16] feat | BudgetSummaryWidget — виджет сводки бюджета на странице Конвертов
+
+- `BudgetSummaryWidget.tsx`: новый компонент — 4 тайла (ХаниМани, Резервы, Накопления, Всего)
+- `EnvelopesPage.tsx`: вычисление 4 значений через `useMemo`; виджет отображается вместо SpendingRow и Резервы-группы
+- `EnvelopeList.tsx`: упрощён — только пользовательские конверты (fund/goal), возвращает null если список пуст
+- `constants.ts`: TYPE_ORDER = ['fund', 'goal'] (reserve убран, ХаниМани никогда не был)
+- `SpendingRow.tsx`: удалён (заменён виджетом)
+- Тесты обновлены; итого 139 тестов
+
+## [2026-05-16] arch | ХаниМани — вычисляемое значение, убран из Firestore
+
+- `envelopeService.ts`: убран spending из BUILT_IN_ENVELOPES — при регистрации создаётся только 1 документ (Резервы)
+- `envelopeStore.ts`: разделены ошибки для spending/reserve; spending теперь отдельная ветка с корректным сообщением
+- `SpendingRow.tsx`: новый компонент — read-only строка с вычисленным балансом ХаниМани
+- `EnvelopeList.tsx`: принимает `spendingBalance`, рендерит SpendingRow; убран spending из TYPE_ORDER
+- `constants.ts`: spending убран из TYPE_ORDER
+- `EnvelopesPage.tsx`: подключён `useAccountStore`, баланс ХаниМани вычисляется через `useMemo`
+- Тесты: EnvelopeGroup/EnvelopeList/EnvelopesPage/envelopeStore обновлены; итого 141 тест
+- Вики: Данные.md, ФТ.md EN-01, Архитектура/index.md #13 обновлены
+
 ## [2026-05-16] аудит | 4 правки (тесты ×2, EN-03, sortOrder-комментарии)
 
 - index.md стр. 44: «139 тестов» → 137

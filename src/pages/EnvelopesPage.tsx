@@ -1,18 +1,36 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useEnvelopeStore } from '../stores/envelopeStore'
+import { useAccountStore } from '../stores/accountStore'
 import EnvelopeList from '../components/envelopes/EnvelopeList'
 import EnvelopeModal from '../components/envelopes/EnvelopeModal'
+import BudgetSummaryWidget from '../components/envelopes/BudgetSummaryWidget'
 import Layout from '../components/Layout'
 import type { Envelope, CreateEnvelopeInput, UpdateEnvelopeInput } from '../types/envelope'
 
 export default function EnvelopesPage() {
   const { envelopes, loading, error, fetchEnvelopes, createEnvelope, updateEnvelope, deleteEnvelope } = useEnvelopeStore()
+  const { accounts, fetchAccounts } = useAccountStore()
   const [modalEnvelope, setModalEnvelope] = useState<Envelope | null>(null)
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     fetchEnvelopes()
+    fetchAccounts()
   }, [])
+
+  const summary = useMemo(() => {
+    const total = accounts
+      .filter((a) => a.includeInBalance)
+      .reduce((s, a) => s + a.balance, 0)
+    const reserveBalance = envelopes
+      .filter((e) => e.type === 'reserve')
+      .reduce((s, e) => s + e.balance, 0)
+    const goalsBalance = envelopes
+      .filter((e) => e.type === 'fund' || e.type === 'goal')
+      .reduce((s, e) => s + e.balance, 0)
+    const spendingBalance = total - reserveBalance - goalsBalance
+    return { total, reserveBalance, goalsBalance, spendingBalance }
+  }, [accounts, envelopes])
 
   const handleCreate = async (data: CreateEnvelopeInput | UpdateEnvelopeInput) => {
     await createEnvelope(data as CreateEnvelopeInput)
@@ -59,11 +77,19 @@ export default function EnvelopesPage() {
       {loading ? (
         <div className="text-center py-12 text-muted">Загрузка…</div>
       ) : (
-        <EnvelopeList
-          envelopes={envelopes}
-          onEdit={openEdit}
-          onDelete={handleDelete}
-        />
+        <div className="space-y-3">
+          <BudgetSummaryWidget
+            spendingBalance={summary.spendingBalance}
+            reserveBalance={summary.reserveBalance}
+            goalsBalance={summary.goalsBalance}
+            total={summary.total}
+          />
+          <EnvelopeList
+            envelopes={envelopes}
+            onEdit={openEdit}
+            onDelete={handleDelete}
+          />
+        </div>
       )}
 
       {showModal && (

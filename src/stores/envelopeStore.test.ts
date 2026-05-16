@@ -97,13 +97,16 @@ describe('envelopeStore', () => {
       expect(useEnvelopeStore.getState().error).toBe('Достигнут лимит конвертов (20). Удалите неиспользуемые.')
     })
 
-    it('does not allow creating spending/reserve envelope', async () => {
+    it('блокирует создание конверта типа spending (ХаниМани — вычисляемое)', async () => {
       await useEnvelopeStore.getState().createEnvelope({ name: 'Fix', type: 'spending', balance: 0, sortOrder: 0, isHidden: false })
       expect(mockService.createEnvelope).not.toHaveBeenCalled()
-      expect(useEnvelopeStore.getState().error).toBe('ХаниМани и Резервы создаются автоматически')
+      expect(useEnvelopeStore.getState().error).toBe('ХаниМани — вычисляемое значение, конверт не создаётся')
+    })
+
+    it('блокирует создание конверта типа reserve (Резервы создаются автоматически)', async () => {
       await useEnvelopeStore.getState().createEnvelope({ name: 'Fix', type: 'reserve', balance: 0, sortOrder: 0, isHidden: false })
       expect(mockService.createEnvelope).not.toHaveBeenCalled()
-      expect(useEnvelopeStore.getState().error).toBe('ХаниМани и Резервы создаются автоматически')
+      expect(useEnvelopeStore.getState().error).toBe('Резервы создаются автоматически')
     })
   })
 

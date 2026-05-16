@@ -34,8 +34,12 @@ export const useEnvelopeStore = create<EnvelopeState>((set) => ({
   createEnvelope: async (data) => {
     const user = useAuthStore.getState().user
     if (!user) return
-    if (data.type === 'spending' || data.type === 'reserve') {
-      set({ error: 'ХаниМани и Резервы создаются автоматически' })
+    if (data.type === 'spending') {
+      set({ error: 'ХаниМани — вычисляемое значение, конверт не создаётся' })
+      return
+    }
+    if (data.type === 'reserve') {
+      set({ error: 'Резервы создаются автоматически' })
       return
     }
     const userCount = useEnvelopeStore.getState().envelopes.filter((e) => !e.isBuiltIn).length

@@ -14,4 +14,4 @@ export const TYPE_ICONS: Record<EnvelopeType, string> = {
   goal: '🎯',
 }
 
-export const TYPE_ORDER: EnvelopeType[] = ['spending', 'reserve', 'fund', 'goal']
+export const TYPE_ORDER: EnvelopeType[] = ['fund', 'goal']
