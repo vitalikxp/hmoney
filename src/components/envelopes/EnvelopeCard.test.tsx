@@ -28,16 +28,6 @@ describe('EnvelopeCard', () => {
     expect(screen.getByText('🏦')).toBeInTheDocument()
   })
 
-  it('показывает badge «цель» когда isGoal true', () => {
-    renderCard({ isGoal: true })
-    expect(screen.getByText('цель')).toBeInTheDocument()
-  })
-
-  it('не показывает badge «цель» когда isGoal false', () => {
-    renderCard({ isGoal: false, target: undefined })
-    expect(screen.queryByText('цель')).not.toBeInTheDocument()
-  })
-
   it('shows target amount when target is set', () => {
     renderCard({ target: 100000 })
     expect(screen.getByText(/цель 100 000₽/)).toBeInTheDocument()
@@ -46,16 +36,6 @@ describe('EnvelopeCard', () => {
   it('does not show target when target is absent', () => {
     renderCard({ target: undefined, isGoal: false })
     expect(screen.queryByText(/цель \d/)).not.toBeInTheDocument()
-  })
-
-  it('shows "скрыт" badge when isHidden is true', () => {
-    renderCard({ isHidden: true })
-    expect(screen.getByText('скрыт')).toBeInTheDocument()
-  })
-
-  it('does not show badge when isHidden is false', () => {
-    renderCard({ isHidden: false })
-    expect(screen.queryByText('скрыт')).not.toBeInTheDocument()
   })
 
   it('shows progress bar when target is set', () => {

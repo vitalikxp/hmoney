@@ -8,7 +8,6 @@ export interface Account {
   icon?: string
   includeInBalance: boolean
   currency: string
-  group: 'favorites' | 'investments' | 'hidden' | 'default'
   sortOrder: number
   createdAt: Timestamp
   updatedAt: Timestamp

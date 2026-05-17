@@ -12,31 +12,29 @@ function renderList(accounts = [createMockAccount()]) {
 describe('AccountList', () => {
   it('renders total balance of included accounts', () => {
     renderList([
-      createMockAccount({ balance: 1000, group: 'favorites' }),
-      createMockAccount({ balance: 2000, group: 'default', name: 'Другой' }),
+      createMockAccount({ balance: 1000 }),
+      createMockAccount({ balance: 2000, name: 'Другой' }),
     ])
-    expect(screen.getByText('Всего').parentElement).toHaveTextContent('3 000₽')
+    expect(screen.getByRole('button', { name: /счета/i })).toHaveTextContent('3 000₽')
   })
 
   it('excludes accounts not in balance from total', () => {
     renderList([
-      createMockAccount({ balance: 1000, group: 'favorites' }),
-      createMockAccount({ balance: 5000, includeInBalance: false, group: 'hidden', name: 'Тайник' }),
+      createMockAccount({ balance: 1000 }),
+      createMockAccount({ balance: 5000, includeInBalance: false, name: 'Тайник' }),
     ])
-    expect(screen.getByText('Всего').parentElement).toHaveTextContent('1 000₽')
+    expect(screen.getByRole('button', { name: /счета/i })).toHaveTextContent('1 000₽')
   })
 
-  it('groups accounts by group type', () => {
+  it('renders all accounts', () => {
     renderList([
-      createMockAccount({ group: 'favorites', name: 'Любимый' }),
-      createMockAccount({ group: 'investments', name: 'Инвестиция', icon: '📈' }),
-      createMockAccount({ group: 'hidden', name: 'Секрет', icon: '🔒' }),
-      createMockAccount({ group: 'default', name: 'Обычный' }),
+      createMockAccount({ name: 'Счёт 1' }),
+      createMockAccount({ name: 'Счёт 2' }),
+      createMockAccount({ name: 'Счёт 3' }),
     ])
-    expect(screen.getByText('Избранные')).toBeInTheDocument()
-    expect(screen.getByText('Инвестиции')).toBeInTheDocument()
-    expect(screen.getByText('Скрытые')).toBeInTheDocument()
-    expect(screen.getByText('Прочие')).toBeInTheDocument()
+    expect(screen.getByText('Счёт 1')).toBeInTheDocument()
+    expect(screen.getByText('Счёт 2')).toBeInTheDocument()
+    expect(screen.getByText('Счёт 3')).toBeInTheDocument()
   })
 
   it('returns null when no accounts', () => {

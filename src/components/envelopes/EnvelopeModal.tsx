@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { Envelope, CreateEnvelopeInput, UpdateEnvelopeInput } from '../../types/envelope'
 import { ICONS, DEFAULT_ICON } from './constants'
+import MoneyInput from '../ui/MoneyInput'
 
 interface Props {
   envelope: Envelope | null
@@ -9,7 +10,7 @@ interface Props {
 }
 
 function toInput(envelope: Envelope | null): CreateEnvelopeInput {
-  if (!envelope) return { name: '', isGoal: false, balance: 0, sortOrder: 0, isHidden: false, icon: DEFAULT_ICON }
+  if (!envelope) return { name: '', isGoal: false, balance: 0, sortOrder: 0, icon: DEFAULT_ICON }
   const { id: _id, createdAt: _c, updatedAt: _u, ...rest } = envelope
   return rest
 }
@@ -80,15 +81,14 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
           </div>
 
           <div>
-            <label className="block text-sm text-muted mb-1">Баланс *</label>
-            <input
-              type="number"
-              step="1"
-              required
+            <label htmlFor="envelope-balance" className="block text-sm text-muted mb-1">Баланс *</label>
+            <MoneyInput
+              id="envelope-balance"
               value={form.balance}
-              onChange={(e) => setForm({ ...form, balance: parseInt(e.target.value) || 0 })}
+              onValueChange={(v) => setForm({ ...form, balance: v.floatValue ?? 0 })}
+              allowNegative
+              required
               onFocus={(e) => e.target.select()}
-              className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink font-mono outline-none focus:border-yellow transition-colors"
             />
           </div>
 
@@ -105,28 +105,15 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
 
           {form.isGoal && (
             <div>
-              <label className="block text-sm text-muted mb-1">Целевая сумма *</label>
-              <input
-                type="number"
-                step="1"
-                required
+              <label htmlFor="target" className="block text-sm text-muted mb-1">Целевая сумма *</label>
+              <MoneyInput
+                id="target"
                 value={form.target ?? ''}
-                onChange={(e) => setForm({ ...form, target: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink font-mono outline-none focus:border-yellow transition-colors"
+                onValueChange={(v) => setForm({ ...form, target: v.floatValue ?? 0 })}
+                required
               />
             </div>
           )}
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="isHidden"
-              checked={form.isHidden}
-              onChange={(e) => setForm({ ...form, isHidden: e.target.checked })}
-              className="accent-yellow"
-            />
-            <label htmlFor="isHidden" className="text-sm text-muted">Скрытый конверт</label>
-          </div>
 
           <div className="flex gap-2 pt-2">
             <button

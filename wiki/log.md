@@ -6,6 +6,65 @@ status: updated
 
 # Журнал изменений
 
+## [2026-05-17] аудит | wiki: BudgetSummaryWidget, E2E-счётчик, ФТ EN-01/EN-02
+
+- `Компоненты.md`: «Накопления» → «Конверты» в описании BudgetSummaryWidget
+- `index.md`: E2E «23 (18 local + 5 production)» → «19 local + 5 production» (реальный count)
+- `ФТ.md EN-01/EN-02`: уточнены формулировки под `isGoal` флаг вместо type-значений fund/goal
+
+## [2026-05-17] аудит | wiki: счётчики тестов, react-number-format, AC-08/EN-09/AC-01/EN-01
+
+- `Стек.md`, `index.md`: 140 тестов → 139 (актуальный count после refactoring)
+- `Стек.md`: добавлен раздел `react-number-format` (зависимость, MoneyInput)
+- `Данные.md`: в примере Account `"Тинькофф"` → `"Карта"` (плейсхолдер переименован ранее)
+- `ФТ.md AC-01`: убраны «инвестиции» (группа инвестиций удалена)
+- `ФТ.md AC-08`: «группировка Favorites/Investments/Hidden» → «единая сворачиваемая группа»
+- `ФТ.md EN-09`: «скрытые конверты» зачёркнуто (isHidden удалён)
+- `ФТ.md EN-01/EN-02`: убраны type-значения «fund»/«goal», заменены на `isGoal` флаг
+
+## [2026-05-17] refactor | Simplify: MoneyInput компонент, упрощение AccountList, toInput
+
+- `src/components/ui/MoneyInput.tsx` создан — обёртка `NumericFormat` с общими пропами (`thousandSeparator`, `decimalScale`, `className`); устраняет 4 копии идентичного блока пропов
+- `AccountModal`, `EnvelopeModal`: импорт `NumericFormat` заменён на `MoneyInput`
+- `AccountList`: убрана лишняя `<div className="space-y-3">` вокруг единственного дочернего элемента — прямой return `AccountGroup`
+- `AccountModal.toInput`: `creditLimit` явно вынесен из `rest` перед нормализацией `?? undefined` — убрана двусмысленная перезапись
+
+## [2026-05-17] refactor | Числовые инпуты: react-number-format, форматирование разрядов, отрицательный баланс
+
+- `package.json`: добавлена зависимость `react-number-format ^5.4.5`
+- `AccountModal`: `type="number"` → `NumericFormat` с `thousandSeparator=" "`, `allowNegative={true}` для баланса, `allowNegative={false}` для кредитного лимита
+- `EnvelopeModal`: `type="number"` → `NumericFormat` с `thousandSeparator=" "` для баланса и целевой суммы
+- E2E: `AccountModal.ts` — локаторы `getByRole('spinbutton')` → `locator('#balance')` / `locator('#credit-limit-amount')`; удалён лишний `selectGroup`
+- E2E: `accounts.spec.ts` — тест «создать счёт в группе Инвестиции» → «создать счёт с отрицательным балансом»; проверка `-5 000₽`
+- Unit: `AccountModal.test.tsx` — добавлен тест «позволяет ввести отрицательный баланс»
+
+## [2026-05-17] refactor | Счета: AccountGroup в стиле EnvelopeGroup + инструкции по визуальным паттернам
+
+- `AccountGroup.tsx` создан — зеркальная копия вёрстки `EnvelopeGroup` (сворачиваемый заголовок, иконка, счётчик, сумма)
+- `AccountList.tsx` упрощён: убрана строка «Всего», используется единый `AccountGroup`
+- `AccountGroup.test.tsx` добавлен
+- `AGENTS.md`: новый раздел «Визуальные компоненты и переиспользование вёрстки» с таблицей паттернов
+- `CLAUDE.md`: добавлена строка о переиспользовании вёрстки
+- `Компоненты.md`: `AccountGroup` возвращён в дерево
+
+## [2026-05-17] refactor | Конверты: удалён признак «Скрытый конверт» (isHidden)
+
+- `src/types/envelope.ts`: удалено поле `isHidden`
+- `EnvelopeModal`: удалён чекбокс «Скрытый конверт»
+- `EnvelopeCard`: удалён бейдж «скрыт»
+- `envelopeService`: убран `isHidden: false` из built-in конвертов
+- Тесты: `createMockEnvelope`, `envelopeStore.test`, `EnvelopeCard.test` очищены
+- Wiki: `Данные.md` обновлена
+
+## [2026-05-17] refactor | Счета: убрана группировка, обновлён плейсхолдер
+
+- `src/types/account.ts`: удалено поле `group`
+- `AccountModal`: удалён `<select>` группы, плейсхолдер «Тинькофф» → «Карта»
+- `AccountList`: плоский список карточек вместо группировки по `AccountGroup`
+- `AccountGroup` (компонент и тест) удалён
+- Тесты: `createMockAccount`, `accountStore.test`, `AccountList.test`, `AccountModal.test`, e2e-модели и `accounts.spec` очищены от `group`
+- Wiki: `ТЗ.md`, `Данные.md`, `Компоненты.md` обновлены
+
 ## [2026-05-17] refactor | Упрощение конвертов: убран тип, добавлен признак «Цель»
 
 - `src/types/envelope.ts`: удалён `EnvelopeType` и поле `type`; добавлен `isGoal: boolean`

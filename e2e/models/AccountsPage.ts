@@ -43,7 +43,6 @@ export class AccountsPage {
     balance?: number
     icon?: string
     creditLimit?: number
-    group?: string
     includeInBalance?: boolean
   }) {
     await this.createButton.click()
@@ -51,7 +50,6 @@ export class AccountsPage {
     if (overrides?.icon) await this.modal.pickIcon(overrides.icon)
     await this.modal.setBalance(overrides?.balance ?? 0)
     if (overrides?.creditLimit != null) await this.modal.enableCreditLimit(overrides.creditLimit)
-    if (overrides?.group) await this.modal.selectGroup(overrides.group)
     if (overrides?.includeInBalance === false) await this.modal.uncheckIncludeInBalance()
     await this.modal.submit()
   }

@@ -9,7 +9,6 @@ export function createMockEnvelope(overrides?: Partial<Envelope>): Envelope {
     icon: '✉️',
     isBuiltIn: false,
     sortOrder: 0,
-    isHidden: false,
     createdAt: { seconds: 0, nanoseconds: 0 } as Envelope['createdAt'],
     updatedAt: { seconds: 0, nanoseconds: 0 } as Envelope['updatedAt'],
     ...overrides,

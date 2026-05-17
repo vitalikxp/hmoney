@@ -37,7 +37,6 @@ export async function ensureBuiltInEnvelopes(userId: string): Promise<void> {
         isGoal: false,
         balance: 0,
         sortOrder: tmpl.sortOrder,
-        isHidden: false,
         icon: tmpl.icon,
         isBuiltIn: true,
       })

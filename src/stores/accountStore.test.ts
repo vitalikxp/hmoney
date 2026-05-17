@@ -70,7 +70,7 @@ describe('accountStore', () => {
       mockService.createAccount.mockResolvedValueOnce('new-id')
       mockService.fetchAccounts.mockResolvedValueOnce([createMockAccount()])
 
-      await useAccountStore.getState().createAccount({ name: 'New', balance: 0, includeInBalance: true, currency: 'RUB', group: 'default', sortOrder: 0 })
+      await useAccountStore.getState().createAccount({ name: 'New', balance: 0, includeInBalance: true, currency: 'RUB', sortOrder: 0 })
 
       expect(mockService.createAccount).toHaveBeenCalledWith('test-uid', expect.objectContaining({ name: 'New' }))
       expect(mockService.fetchAccounts).toHaveBeenCalledAfter(mockService.createAccount)
@@ -79,7 +79,7 @@ describe('accountStore', () => {
     it('sets error on failure', async () => {
       vi.spyOn(console, 'error').mockImplementation(() => {})
       mockService.createAccount.mockRejectedValueOnce(new Error('fail'))
-      await useAccountStore.getState().createAccount({ name: 'New', balance: 0, includeInBalance: true, currency: 'RUB', group: 'default', sortOrder: 0 })
+      await useAccountStore.getState().createAccount({ name: 'New', balance: 0, includeInBalance: true, currency: 'RUB', sortOrder: 0 })
       expect(useAccountStore.getState().error).toBe('Ошибка создания счёта')
     })
   })

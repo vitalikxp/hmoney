@@ -92,7 +92,7 @@ describe('AccountsPage', () => {
     })
     renderPage()
     expect(screen.getByText('Наличные')).toBeInTheDocument()
-    expect(screen.getByText('Всего')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /счета/i })).toBeInTheDocument()
   })
 
   it('shows user email and logout button', () => {

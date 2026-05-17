@@ -4,14 +4,16 @@ import AccountCard from './AccountCard'
 
 interface Props {
   label: string
+  icon: string
   accounts: Account[]
-  total: number
   onEdit: (a: Account) => void
   onDelete: (a: Account) => void
 }
 
-export default function AccountGroup({ label, accounts, total, onEdit, onDelete }: Props) {
+export default function AccountGroup({ label, icon, accounts, onEdit, onDelete }: Props) {
   const [collapsed, setCollapsed] = useState(false)
+
+  const total = accounts.reduce((s, a) => s + (a.includeInBalance ? a.balance : 0), 0)
 
   if (accounts.length === 0) return null
 
@@ -21,7 +23,11 @@ export default function AccountGroup({ label, accounts, total, onEdit, onDelete 
         onClick={() => setCollapsed(!collapsed)}
         className="w-full flex items-center justify-between px-4 py-2.5 bg-elevated/50 hover:bg-elevated transition-colors cursor-pointer"
       >
-        <span className="text-sm font-semibold text-ink">{label}</span>
+        <span className="flex items-center gap-2">
+          <span className="text-sm">{icon}</span>
+          <span className="text-sm font-semibold text-ink">{label}</span>
+          <span className="text-xs text-muted">({accounts.length})</span>
+        </span>
         <span className="text-sm font-mono text-muted">{total.toLocaleString('ru-RU')}₽</span>
       </button>
       {!collapsed && accounts.map((a) => (

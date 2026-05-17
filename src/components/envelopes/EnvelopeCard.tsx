@@ -16,12 +16,7 @@ export default function EnvelopeCard({ envelope, onEdit, onDelete }: Props) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-ink font-medium truncate">{envelope.name}</span>
-          {envelope.isGoal && (
-            <span className="text-xs text-muted shrink-0">цель</span>
-          )}
-          {envelope.isHidden && (
-            <span className="text-xs text-muted shrink-0">скрыт</span>
-          )}
+
         </div>
         {envelope.target != null && (
           <div className="text-xs text-muted mt-0.5">

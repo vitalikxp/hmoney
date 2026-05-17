@@ -92,6 +92,28 @@ wiki/
 - Сливать `dev` в `master` и деплоить — **только по явному запросу пользователя** («слей в мастер» или «сделай деплой»)
 - Пользователь сам управляет, когда изменения попадают в продакшен
 
+## Визуальные компоненты и переиспользование вёрстки
+
+**Правило:** перед созданием нового визуального компонента найди существующий с аналогичной структурой и скопируй его разметку дословно — не изобретай новые CSS-варианты для уже решённых паттернов.
+
+### Установленные паттерны (обязательны к переиспользованию)
+
+| Паттерн | Образец | Ключевые CSS-классы |
+|---------|---------|---------------------|
+| Сворачиваемая группа | `EnvelopeGroup`, `AccountGroup` | контейнер: `border border-hairline rounded-lg overflow-hidden`; заголовок: `w-full flex items-center justify-between px-4 py-2.5 bg-elevated/50 hover:bg-elevated transition-colors cursor-pointer` |
+| Строка карточки | `EnvelopeCard`, `AccountCard` | `flex items-center gap-3 px-4 py-3 hover:bg-elevated/50 transition-colors border-b border-hairline last:border-b-0` |
+| Иконка-кружок | `EnvelopeCard`, `AccountCard` | `w-8 h-8 rounded-full bg-elevated flex items-center justify-center text-sm shrink-0` |
+| Бейдж-метка | `EnvelopeCard` (цель), `AccountCard` (исключён) | `text-xs text-muted shrink-0` |
+| Кнопки действий (ред./удал.) | `EnvelopeCard`, `AccountCard` | `p-1.5 text-muted hover:text-ink hover:bg-elevated rounded transition-colors cursor-pointer` |
+| Модальное окно | `EnvelopeModal`, `AccountModal` | оверлей `fixed inset-0 z-50`, карточка `bg-surface border border-hairline rounded-xl w-full max-w-md mx-4 p-6 shadow-2xl` |
+
+### Как применять
+
+1. Нужен список с заголовком и сворачиванием — используй структуру `EnvelopeGroup`/`AccountGroup` дословно.
+2. Нужна новая карточка в списке — скопируй `flex items-center gap-3 px-4 py-3 ...` из `EnvelopeCard`.
+3. Нужно новое модальное окно формы — скопируй обёртку из `EnvelopeModal`/`AccountModal`.
+4. Токены дизайн-системы (цвета, отступы, шрифты) — смотри `wiki/Архитектура/Дизайн.md`.
+
 ## Unit-тестирование
 
 ### Обязательное правило

@@ -39,11 +39,24 @@ describe('AccountModal', () => {
       const onSubmit = vi.fn().mockResolvedValue(undefined)
       renderModal(null, onSubmit)
 
-      await user.type(screen.getByPlaceholderText('Наличные, Тинькофф, …'), 'Мой счёт')
+      await user.type(screen.getByPlaceholderText('Наличные, Карта, …'), 'Мой счёт')
       await user.click(screen.getByText('Создать'))
 
       expect(onSubmit).toHaveBeenCalledTimes(1)
       expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name: 'Мой счёт' }))
+    })
+
+    it('позволяет ввести отрицательный баланс', async () => {
+      const user = userEvent.setup()
+      const onSubmit = vi.fn().mockResolvedValue(undefined)
+      renderModal(null, onSubmit)
+
+      await user.type(screen.getByPlaceholderText('Наличные, Карта, …'), 'Долг')
+      await user.click(screen.getByLabelText('Баланс *'))
+      await user.keyboard('-5000')
+      await user.click(screen.getByText('Создать'))
+
+      expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ balance: -5000 }))
     })
 
     it('disables submit when name is empty', () => {
@@ -56,7 +69,7 @@ describe('AccountModal', () => {
       const onSubmit = vi.fn().mockResolvedValue(undefined)
       const { onClose } = renderModal(null, onSubmit)
 
-      await user.type(screen.getByPlaceholderText('Наличные, Тинькофф, …'), 'test')
+      await user.type(screen.getByPlaceholderText('Наличные, Карта, …'), 'test')
       await user.click(screen.getByText('Создать'))
 
       expect(onClose).toHaveBeenCalledTimes(1)
@@ -71,7 +84,7 @@ describe('AccountModal', () => {
 
     it('pre-fills form with account data', () => {
       renderModal({ name: 'Карта', balance: 5000 })
-      const input = screen.getByPlaceholderText('Наличные, Тинькофф, …') as HTMLInputElement
+      const input = screen.getByPlaceholderText('Наличные, Карта, …') as HTMLInputElement
       expect(input.value).toBe('Карта')
     })
 

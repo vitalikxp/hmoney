@@ -57,15 +57,15 @@ test.describe('Счета', () => {
     await expect(page.getByText('исключён', { exact: true })).toBeVisible()
   })
 
-  test('создать счёт в группе Инвестиции', async ({ page, accountsPage }) => {
+  test('создать счёт с отрицательным балансом', async ({ page, accountsPage }) => {
     await registerAndLogin(page)
-    const name = `Инвест ${Date.now()}`
+    const name = `Долг ${Date.now()}`
 
     await accountsPage.goto()
-    await accountsPage.createAccount(name, { balance: 10000, group: 'Инвестиции' })
+    await accountsPage.createAccount(name, { balance: -5000 })
 
     await expect(page.getByText(name, { exact: true })).toBeVisible()
-    await expect(page.getByRole('button', { name: /инвестиции/i })).toBeVisible()
+    await expect(page.getByText('-5 000₽')).toBeVisible()
   })
 
   test('редактировать счёт', async ({ page, accountsPage }) => {

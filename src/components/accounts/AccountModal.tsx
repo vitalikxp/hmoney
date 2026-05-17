@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { Account, CreateAccountInput, UpdateAccountInput } from '../../types/account'
+import MoneyInput from '../ui/MoneyInput'
 
 interface Props {
   account: Account | null
@@ -9,17 +10,10 @@ interface Props {
 
 const ICONS = ['💳', '💰', '🏦', '💵', '🏠', '🚗', '🎓', '✈️', '🛒', '🍽️', '🏥', '🛠️', '🎮', '👶', '📱', '🔧', '💎', '🐾']
 
-const GROUPS: Array<{ value: Account['group']; label: string }> = [
-  { value: 'favorites', label: 'Избранные' },
-  { value: 'investments', label: 'Инвестиции' },
-  { value: 'hidden', label: 'Скрытые' },
-  { value: 'default', label: 'Прочие' },
-]
-
 function toInput(account: Account | null): CreateAccountInput {
-  if (!account) return { name: '', balance: 0, includeInBalance: true, currency: 'RUB', group: 'favorites', sortOrder: 0, icon: ICONS[0] }
-  const { id: _id, createdAt: _c, updatedAt: _u, ...rest } = account
-  return { ...rest, creditLimit: account.creditLimit ?? undefined }
+  if (!account) return { name: '', balance: 0, includeInBalance: true, currency: 'RUB', sortOrder: 0, icon: ICONS[0] }
+  const { id: _id, createdAt: _c, updatedAt: _u, creditLimit, ...rest } = account
+  return { ...rest, creditLimit: creditLimit ?? undefined }
 }
 
 export default function AccountModal({ account, onSubmit, onClose }: Props) {
@@ -64,7 +58,7 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
               required
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Наличные, Тинькофф, …"
+              placeholder="Наличные, Карта, …"
               className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink placeholder:text-muted/50 outline-none focus:border-yellow transition-colors"
             />
           </div>
@@ -90,15 +84,14 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
           </div>
 
           <div>
-            <label className="block text-sm text-muted mb-1">Баланс *</label>
-            <input
-              type="number"
-              step="1"
-              required
+            <label htmlFor="balance" className="block text-sm text-muted mb-1">Баланс *</label>
+            <MoneyInput
+              id="balance"
               value={form.balance}
-              onChange={(e) => setForm({ ...form, balance: parseInt(e.target.value) || 0 })}
+              onValueChange={(v) => setForm({ ...form, balance: v.floatValue ?? 0 })}
+              allowNegative
+              required
               onFocus={(e) => e.target.select()}
-              className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink font-mono outline-none focus:border-yellow transition-colors"
             />
           </div>
 
@@ -115,29 +108,14 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
 
           {creditEnabled && (
             <div>
-              <label className="block text-sm text-muted mb-1">Лимит</label>
-              <input
-                type="number"
-                step="1"
+              <label htmlFor="credit-limit-amount" className="block text-sm text-muted mb-1">Лимит</label>
+              <MoneyInput
+                id="credit-limit-amount"
                 value={form.creditLimit ?? ''}
-                onChange={(e) => setForm({ ...form, creditLimit: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink font-mono outline-none focus:border-yellow transition-colors"
+                onValueChange={(v) => setForm({ ...form, creditLimit: v.floatValue ?? 0 })}
               />
             </div>
           )}
-
-          <div>
-            <label className="block text-sm text-muted mb-1">Группа</label>
-            <select
-              value={form.group}
-              onChange={(e) => setForm({ ...form, group: e.target.value as Account['group'] })}
-              className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink outline-none focus:border-yellow transition-colors"
-            >
-              {GROUPS.map((g) => (
-                <option key={g.value} value={g.value}>{g.label}</option>
-              ))}
-            </select>
-          </div>
 
           {!isEdit && (
             <div className="flex items-center gap-2">

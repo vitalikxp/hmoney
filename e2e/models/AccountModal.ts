@@ -12,19 +12,15 @@ export class AccountModal {
   }
 
   get nameInput(): Locator {
-    return this.form.getByPlaceholder('Наличные, Тинькофф, …')
+    return this.form.getByPlaceholder('Наличные, Карта, …')
   }
 
   get balanceInput(): Locator {
-    return this.form.getByRole('spinbutton').first()
+    return this.form.locator('#balance')
   }
 
   get creditLimitInput(): Locator {
-    return this.form.getByRole('spinbutton').nth(1)
-  }
-
-  get groupSelect(): Locator {
-    return this.form.getByRole('combobox')
+    return this.form.locator('#credit-limit-amount')
   }
 
   get submitButton(): Locator {
@@ -50,10 +46,6 @@ export class AccountModal {
   async enableCreditLimit(limit: number) {
     await this.form.getByLabel('Кредитный лимит').check()
     await this.creditLimitInput.fill(String(limit))
-  }
-
-  async selectGroup(label: string) {
-    await this.groupSelect.selectOption(label)
   }
 
   async uncheckIncludeInBalance() {

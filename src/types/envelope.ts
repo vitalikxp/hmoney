@@ -9,7 +9,6 @@ export interface Envelope {
   icon?: string
   isBuiltIn?: boolean
   sortOrder: number
-  isHidden: boolean
   createdAt: Timestamp
   updatedAt: Timestamp
 }

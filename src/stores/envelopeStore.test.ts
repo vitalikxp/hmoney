@@ -72,7 +72,7 @@ describe('envelopeStore', () => {
       mockService.createEnvelope.mockResolvedValueOnce('new-id')
       mockService.fetchEnvelopes.mockResolvedValueOnce([createMockEnvelope()])
 
-      await useEnvelopeStore.getState().createEnvelope({ name: 'New', isGoal: false, balance: 0, sortOrder: 0, isHidden: false })
+      await useEnvelopeStore.getState().createEnvelope({ name: 'New', isGoal: false, balance: 0, sortOrder: 0 })
 
       expect(mockService.createEnvelope).toHaveBeenCalledWith('test-uid', expect.objectContaining({ name: 'New' }))
       expect(mockService.fetchEnvelopes).toHaveBeenCalledAfter(mockService.createEnvelope)
@@ -81,7 +81,7 @@ describe('envelopeStore', () => {
     it('sets error on failure', async () => {
       vi.spyOn(console, 'error').mockImplementation(() => {})
       mockService.createEnvelope.mockRejectedValueOnce(new Error('fail'))
-      await useEnvelopeStore.getState().createEnvelope({ name: 'New', isGoal: false, balance: 0, sortOrder: 0, isHidden: false })
+      await useEnvelopeStore.getState().createEnvelope({ name: 'New', isGoal: false, balance: 0, sortOrder: 0 })
       expect(useEnvelopeStore.getState().error).toBe('Ошибка создания конверта')
     })
 
@@ -91,7 +91,7 @@ describe('envelopeStore', () => {
       )
       useEnvelopeStore.setState({ envelopes: twentyEnvelopes, loading: false, error: null })
 
-      await useEnvelopeStore.getState().createEnvelope({ name: 'Лишний', isGoal: false, balance: 0, sortOrder: 0, isHidden: false })
+      await useEnvelopeStore.getState().createEnvelope({ name: 'Лишний', isGoal: false, balance: 0, sortOrder: 0 })
 
       expect(mockService.createEnvelope).not.toHaveBeenCalled()
       expect(useEnvelopeStore.getState().error).toBe('Достигнут лимит конвертов (20). Удалите неиспользуемые.')

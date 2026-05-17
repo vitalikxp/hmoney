@@ -41,10 +41,10 @@ status: updated
 
 ## Тестирование
 - **Фреймворк:** Vitest + Testing Library
-- **Тестов:** 140 (17 файлов)
+- **Тестов:** 137 (17 файлов)
 - **Запуск:** `npm test` / `npm run test:watch`
 - **CI:** `npm test` перед билдом
-- **E2E:** Playwright, 23 теста (18 local + 5 production), очистка через Admin SDK (`npm run test:e2e:cleanup`)
+- **E2E:** Playwright, 19 local + 5 production, очистка через Admin SDK (`npm run test:e2e:cleanup`)
 - **Инструкции для агентов:** [AGENTS.md](../AGENTS.md#unit-тестирование) / [E2E](../AGENTS.md#e2e-тестирование-playwright)
 
 ## Журнал изменений
@@ -58,6 +58,6 @@ status: updated
 ---
 
 **Всего страниц:** 27
-**Unit-тестов:** 140
-**E2E-тестов:** 23 (18 local + 5 production)
-**Последнее обновление:** 2026-05-16 (36-е обновление)
+**Unit-тестов:** 137
+**E2E-тестов:** 19 local + 5 production
+**Последнее обновление:** 2026-05-17 (42-е обновление)

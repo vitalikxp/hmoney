@@ -8,7 +8,6 @@ export function createMockAccount(overrides?: Partial<Account>): Account {
     icon: '💳',
     includeInBalance: true,
     currency: 'RUB',
-    group: 'default',
     sortOrder: 0,
     createdAt: { seconds: 0, nanoseconds: 0 } as Account['createdAt'],
     updatedAt: { seconds: 0, nanoseconds: 0 } as Account['updatedAt'],
