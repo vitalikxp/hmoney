@@ -23,13 +23,13 @@ export default function EnvelopesPage() {
       .filter((a) => a.includeInBalance)
       .reduce((s, a) => s + a.balance, 0)
     const reserveBalance = envelopes
-      .filter((e) => e.type === 'reserve')
+      .filter((e) => e.isBuiltIn)
       .reduce((s, e) => s + e.balance, 0)
-    const goalsBalance = envelopes
-      .filter((e) => e.type === 'fund' || e.type === 'goal')
+    const envelopesBalance = envelopes
+      .filter((e) => !e.isBuiltIn)
       .reduce((s, e) => s + e.balance, 0)
-    const spendingBalance = total - reserveBalance - goalsBalance
-    return { total, reserveBalance, goalsBalance, spendingBalance }
+    const spendingBalance = total - reserveBalance - envelopesBalance
+    return { total, reserveBalance, envelopesBalance, spendingBalance }
   }, [accounts, envelopes])
 
   const handleCreate = async (data: CreateEnvelopeInput | UpdateEnvelopeInput) => {
@@ -81,13 +81,14 @@ export default function EnvelopesPage() {
           <BudgetSummaryWidget
             spendingBalance={summary.spendingBalance}
             reserveBalance={summary.reserveBalance}
-            goalsBalance={summary.goalsBalance}
+            envelopesBalance={summary.envelopesBalance}
             total={summary.total}
           />
           <EnvelopeList
             envelopes={envelopes}
             onEdit={openEdit}
             onDelete={handleDelete}
+            onAdd={openCreate}
           />
         </div>
       )}

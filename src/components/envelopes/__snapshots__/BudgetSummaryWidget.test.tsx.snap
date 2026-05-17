@@ -92,12 +92,12 @@ exports[`BudgetSummaryWidget > отображает большие суммы и
             <span
               class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-elevated text-sm leading-none"
             >
-              🏦
+              ✉️
             </span>
             <span
               class="truncate text-sm text-muted"
             >
-              Накопления
+              Конверты
             </span>
           </div>
           <span

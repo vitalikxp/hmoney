@@ -28,15 +28,14 @@ export class EnvelopesPage {
   }
 
   async createEnvelope(name: string, overrides?: {
-    type?: string
+    isGoal?: boolean
     balance?: number
     target?: number
   }) {
     await this.createButton.click()
     await this.modal.fillName(name)
-    if (overrides?.type) await this.modal.setType(overrides.type)
     await this.modal.setBalance(overrides?.balance ?? 0)
-    if (overrides?.target != null) await this.modal.enableTarget(overrides.target)
+    if (overrides?.isGoal && overrides?.target != null) await this.modal.enableTarget(overrides.target)
     await this.modal.submit()
   }
 

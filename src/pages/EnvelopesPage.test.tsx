@@ -96,11 +96,11 @@ describe('EnvelopesPage', () => {
   })
 
   it('показывает виджет BudgetSummary с корректными значениями', () => {
-    // 100k счёт, 20k резервы, 30k фонд → ХаниМани = 50k, Всего = 100k
+    // 100k счёт, 20k резервы (built-in), 30k конверт → ХаниМани = 50k, Всего = 100k
     mockUseEnvelopeStore.mockReturnValueOnce({
       envelopes: [
-        createMockEnvelope({ type: 'reserve', balance: 20000 }),
-        createMockEnvelope({ type: 'fund', balance: 30000 }),
+        createMockEnvelope({ isBuiltIn: true, balance: 20000 }),
+        createMockEnvelope({ isBuiltIn: false, balance: 30000 }),
       ],
       loading: false, error: null, fetchEnvelopes: mockFetchEnvelopes,
       createEnvelope: mockCreateEnvelope, updateEnvelope: mockUpdateEnvelope, deleteEnvelope: mockDeleteEnvelope,
@@ -108,7 +108,7 @@ describe('EnvelopesPage', () => {
     renderPage()
     expect(screen.getByText('ХаниМани')).toBeInTheDocument()
     expect(screen.getByText('Резервы')).toBeInTheDocument()
-    expect(screen.getByText('Накопления')).toBeInTheDocument()
+    expect(screen.getAllByText('Конверты').length).toBeGreaterThan(0)
     expect(screen.getByText('Всего')).toBeInTheDocument()
     expect(screen.getByText('50 000₽')).toBeInTheDocument()  // ХаниМани
     expect(screen.getByText('100 000₽')).toBeInTheDocument() // Всего
@@ -131,6 +131,13 @@ describe('EnvelopesPage', () => {
     const user = userEvent.setup()
     renderPage()
     await user.click(screen.getByText('+ Создать'))
+    expect(screen.getByTestId('envelope-modal')).toBeInTheDocument()
+  })
+
+  it('открывает модал из empty state при клике "Создать первый конверт"', async () => {
+    const user = userEvent.setup()
+    renderPage()
+    await user.click(screen.getByRole('button', { name: 'Создать первый конверт' }))
     expect(screen.getByTestId('envelope-modal')).toBeInTheDocument()
   })
 

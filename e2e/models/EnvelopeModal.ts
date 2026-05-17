@@ -15,16 +15,12 @@ export class EnvelopeModal {
     return this.form.getByPlaceholder('Продукты, Ремонт, …')
   }
 
-  get typeSelect(): Locator {
-    return this.form.getByRole('combobox')
-  }
-
   get balanceInput(): Locator {
     return this.form.getByRole('spinbutton').first()
   }
 
-  get targetCheckbox(): Locator {
-    return this.form.getByRole('checkbox', { name: /целевая сумма|сумма фонда/i })
+  get isGoalCheckbox(): Locator {
+    return this.form.getByRole('checkbox', { name: /это цель/i })
   }
 
   get targetInput(): Locator {
@@ -43,16 +39,12 @@ export class EnvelopeModal {
     await this.nameInput.fill(text)
   }
 
-  async setType(label: string) {
-    await this.typeSelect.selectOption(label)
-  }
-
   async setBalance(value: number) {
     await this.balanceInput.fill(String(value))
   }
 
   async enableTarget(value: number) {
-    await this.targetCheckbox.check()
+    await this.isGoalCheckbox.check()
     await this.targetInput.fill(String(value))
   }
 

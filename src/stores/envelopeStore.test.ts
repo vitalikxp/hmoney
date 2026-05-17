@@ -72,7 +72,7 @@ describe('envelopeStore', () => {
       mockService.createEnvelope.mockResolvedValueOnce('new-id')
       mockService.fetchEnvelopes.mockResolvedValueOnce([createMockEnvelope()])
 
-      await useEnvelopeStore.getState().createEnvelope({ name: 'New', type: 'fund', balance: 0, sortOrder: 0, isHidden: false })
+      await useEnvelopeStore.getState().createEnvelope({ name: 'New', isGoal: false, balance: 0, sortOrder: 0, isHidden: false })
 
       expect(mockService.createEnvelope).toHaveBeenCalledWith('test-uid', expect.objectContaining({ name: 'New' }))
       expect(mockService.fetchEnvelopes).toHaveBeenCalledAfter(mockService.createEnvelope)
@@ -81,47 +81,24 @@ describe('envelopeStore', () => {
     it('sets error on failure', async () => {
       vi.spyOn(console, 'error').mockImplementation(() => {})
       mockService.createEnvelope.mockRejectedValueOnce(new Error('fail'))
-      await useEnvelopeStore.getState().createEnvelope({ name: 'New', type: 'fund', balance: 0, sortOrder: 0, isHidden: false })
+      await useEnvelopeStore.getState().createEnvelope({ name: 'New', isGoal: false, balance: 0, sortOrder: 0, isHidden: false })
       expect(useEnvelopeStore.getState().error).toBe('Ошибка создания конверта')
     })
 
     it('блокирует создание при достижении лимита 20 пользовательских конвертов', async () => {
       const twentyEnvelopes = Array.from({ length: 20 }, (_, i) =>
-        createMockEnvelope({ id: `e${i}`, type: 'fund', isBuiltIn: false }),
+        createMockEnvelope({ id: `e${i}`, isGoal: false, isBuiltIn: false }),
       )
       useEnvelopeStore.setState({ envelopes: twentyEnvelopes, loading: false, error: null })
 
-      await useEnvelopeStore.getState().createEnvelope({ name: 'Лишний', type: 'fund', balance: 0, sortOrder: 0, isHidden: false })
+      await useEnvelopeStore.getState().createEnvelope({ name: 'Лишний', isGoal: false, balance: 0, sortOrder: 0, isHidden: false })
 
       expect(mockService.createEnvelope).not.toHaveBeenCalled()
       expect(useEnvelopeStore.getState().error).toBe('Достигнут лимит конвертов (20). Удалите неиспользуемые.')
     })
-
-    it('блокирует создание конверта типа spending (ХаниМани — вычисляемое)', async () => {
-      await useEnvelopeStore.getState().createEnvelope({ name: 'Fix', type: 'spending', balance: 0, sortOrder: 0, isHidden: false })
-      expect(mockService.createEnvelope).not.toHaveBeenCalled()
-      expect(useEnvelopeStore.getState().error).toBe('ХаниМани — вычисляемое значение, конверт не создаётся')
-    })
-
-    it('блокирует создание конверта типа reserve (Резервы создаются автоматически)', async () => {
-      await useEnvelopeStore.getState().createEnvelope({ name: 'Fix', type: 'reserve', balance: 0, sortOrder: 0, isHidden: false })
-      expect(mockService.createEnvelope).not.toHaveBeenCalled()
-      expect(useEnvelopeStore.getState().error).toBe('Резервы создаются автоматически')
-    })
   })
 
   describe('updateEnvelope', () => {
-    it('does not allow changing type of built-in envelope', async () => {
-      useEnvelopeStore.setState({
-        envelopes: [createMockEnvelope({ id: 'built', isBuiltIn: true, type: 'spending' })],
-        loading: false,
-        error: null,
-      })
-      await useEnvelopeStore.getState().updateEnvelope('built', { type: 'fund' })
-      expect(mockService.updateEnvelope).not.toHaveBeenCalled()
-      expect(useEnvelopeStore.getState().error).toBe('Тип встроенного конверта нельзя изменить')
-    })
-  
     it('calls service and refetches', async () => {
       mockService.updateEnvelope.mockResolvedValueOnce(undefined)
       mockService.fetchEnvelopes.mockResolvedValueOnce([createMockEnvelope()])

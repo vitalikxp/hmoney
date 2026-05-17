@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import type { Envelope, EnvelopeType, CreateEnvelopeInput, UpdateEnvelopeInput } from '../../types/envelope'
+import type { Envelope, CreateEnvelopeInput, UpdateEnvelopeInput } from '../../types/envelope'
+import { ICONS, DEFAULT_ICON } from './constants'
 
 interface Props {
   envelope: Envelope | null
@@ -7,15 +8,8 @@ interface Props {
   onClose: () => void
 }
 
-const ICONS = ['🧃', '🛡️', '🏦', '🎯', '💰', '🏠', '🚗', '🎓', '✈️', '🛒', '🍽️', '🏥', '🎮', '👶', '📱', '💎', '🐾', '🌴']
-
-const TYPES: Array<{ value: EnvelopeType; label: string }> = [
-  { value: 'fund', label: 'Фонды' },
-  { value: 'goal', label: 'Цели' },
-]
-
 function toInput(envelope: Envelope | null): CreateEnvelopeInput {
-  if (!envelope) return { name: '', type: 'fund', balance: 0, sortOrder: 0, isHidden: false, icon: ICONS[2] }
+  if (!envelope) return { name: '', isGoal: false, balance: 0, sortOrder: 0, isHidden: false, icon: DEFAULT_ICON }
   const { id: _id, createdAt: _c, updatedAt: _u, ...rest } = envelope
   return rest
 }
@@ -23,12 +17,10 @@ function toInput(envelope: Envelope | null): CreateEnvelopeInput {
 export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
   const isEdit = envelope !== null
   const [form, setForm] = useState(() => toInput(envelope))
-  const [targetEnabled, setTargetEnabled] = useState(envelope?.target != null && envelope.target > 0)
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     setForm(toInput(envelope))
-    setTargetEnabled(envelope?.target != null && envelope.target > 0)
   }, [envelope])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,8 +29,7 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
     setBusy(true)
     try {
       const { target: _t, ...rest } = form
-      const showTarget = form.type === 'fund' || form.type === 'goal'
-      const payload = showTarget && targetEnabled && form.target
+      const payload = form.isGoal && form.target != null
         ? { ...rest, target: form.target }
         : rest
       await onSubmit(payload)
@@ -47,8 +38,6 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
       setBusy(false)
     }
   }
-
-  const showTarget = form.type === 'fund' || form.type === 'goal'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -68,19 +57,6 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
               placeholder="Продукты, Ремонт, …"
               className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink placeholder:text-muted/50 outline-none focus:border-yellow transition-colors"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm text-muted mb-1">Тип</label>
-            <select
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value as EnvelopeType })}
-              className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink outline-none focus:border-yellow transition-colors"
-            >
-              {TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
           </div>
 
           <div>
@@ -116,37 +92,29 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
             />
           </div>
 
-          {showTarget && (
-            <>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="targetEnabled"
-                  checked={targetEnabled}
-                  onChange={(e) => setTargetEnabled(e.target.checked)}
-                  className="accent-yellow"
-                />
-                <label htmlFor="targetEnabled" className="text-sm text-muted">
-                  {form.type === 'goal' ? 'Целевая сумма *' : 'Сумма фонда'}
-                </label>
-              </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="isGoal"
+              checked={form.isGoal}
+              onChange={(e) => setForm({ ...form, isGoal: e.target.checked, target: e.target.checked ? form.target : undefined })}
+              className="accent-yellow"
+            />
+            <label htmlFor="isGoal" className="text-sm text-muted">Это цель</label>
+          </div>
 
-              {targetEnabled && (
-                <div>
-                  <label className="block text-sm text-muted mb-1">
-                    {form.type === 'goal' ? 'Цель' : 'Сумма'}
-                  </label>
-                  <input
-                    type="number"
-                    step="1"
-                    required={form.type === 'goal'}
-                    value={form.target ?? ''}
-                    onChange={(e) => setForm({ ...form, target: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink font-mono outline-none focus:border-yellow transition-colors"
-                  />
-                </div>
-              )}
-            </>
+          {form.isGoal && (
+            <div>
+              <label className="block text-sm text-muted mb-1">Целевая сумма *</label>
+              <input
+                type="number"
+                step="1"
+                required
+                value={form.target ?? ''}
+                onChange={(e) => setForm({ ...form, target: parseInt(e.target.value) || 0 })}
+                className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink font-mono outline-none focus:border-yellow transition-colors"
+              />
+            </div>
           )}
 
           <div className="flex items-center gap-2">

@@ -9,19 +9,28 @@ describe('BudgetSummaryWidget', () => {
       <BudgetSummaryWidget
         spendingBalance={largeNumber}
         reserveBalance={largeNumber}
-        goalsBalance={largeNumber}
+        envelopesBalance={largeNumber}
         total={largeNumber * 4}
       />
     );
 
-    // Проверяем, что большие суммы отображаются и не ломают layout
-    // Проверяем, что все 3 суммы есть
     expect(screen.getAllByText('9 999 999₽')).toHaveLength(3);
-    // Проверяем, что итоговая сумма есть
     expect(screen.getByText('39 999 996₽')).toBeInTheDocument();
-    // Снапшот для контроля верстки
     expect(document.body).toMatchSnapshot();
   });
 
-  // Добавить другие тесты по мере необходимости для различных сценариев
+  it('показывает лейблы ХаниМани, Резервы, Конверты', () => {
+    render(
+      <BudgetSummaryWidget
+        spendingBalance={1000}
+        reserveBalance={2000}
+        envelopesBalance={3000}
+        total={6000}
+      />
+    );
+    expect(screen.getByText('ХаниМани')).toBeInTheDocument();
+    expect(screen.getByText('Резервы')).toBeInTheDocument();
+    expect(screen.getByText('Конверты')).toBeInTheDocument();
+    expect(screen.getByText('Всего')).toBeInTheDocument();
+  });
 });

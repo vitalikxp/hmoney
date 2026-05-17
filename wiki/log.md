@@ -6,6 +6,21 @@ status: updated
 
 # Журнал изменений
 
+## [2026-05-17] refactor | Упрощение конвертов: убран тип, добавлен признак «Цель»
+
+- `src/types/envelope.ts`: удалён `EnvelopeType` и поле `type`; добавлен `isGoal: boolean`
+- `src/components/envelopes/constants.ts`: убраны `TYPE_LABELS/TYPE_ICONS/TYPE_ORDER`; новая палитра с `✉️` первым, `DEFAULT_ICON = '✉️'`
+- `src/lib/envelopeService.ts`: `ensureBuiltInEnvelopes` — идентификация Резервов через `isBuiltIn` вместо `type`
+- `src/stores/envelopeStore.ts`: убраны блокировки по типу `spending`/`reserve`
+- `EnvelopeCard`: убрана метка типа, добавлен badge «цель» при `isGoal: true`, дефолтная иконка `✉️`
+- `EnvelopeGroup`: убран `type` проп, принимает `label` и `icon`
+- `EnvelopeList`: одна группа «Конверты», empty state с кнопкой «Создать первый конверт»
+- `EnvelopeModal`: убран селектор типа, добавлен чекбокс «Это цель» + поле «Целевая сумма *»
+- `BudgetSummaryWidget`: `goalsBalance` → `envelopesBalance`, метка «Накопления» → «Конверты» (`✉️`)
+- `EnvelopesPage`: `onAdd` проп передан в `EnvelopeList`; расчёт сумм через `isBuiltIn`
+- Все unit-тесты и E2E-модели обновлены
+- `wiki/Требования/ТЗ.md`, `wiki/Архитектура/Данные.md`: модель данных обновлена
+
 ## [2026-05-16] аудит | Актуализация wiki после редизайна BudgetSummaryWidget
 
 - ТЗ.md: ХаниМани уточнён как вычисляемое значение, Резервы — единственный системный Firestore-конверт

@@ -19,33 +19,30 @@ describe('EnvelopeModal', () => {
       expect(screen.getByText('Новый конверт')).toBeInTheDocument()
     })
 
-    it('renders default icon selected', () => {
+    it('renders default icon selected (✉️)', () => {
       renderModal()
-      expect(screen.getByText('🧃')).toBeInTheDocument()
+      expect(screen.getByText('✉️').closest('button')?.className).toContain('bg-yellow')
     })
 
-    it('shows type selector', () => {
+    it('не показывает поле целевой суммы по умолчанию', () => {
       renderModal()
-      expect(screen.getByText('Тип')).toBeInTheDocument()
+      expect(screen.queryByText('Целевая сумма *')).not.toBeInTheDocument()
     })
 
-    it('hides target fields for spending type', () => {
-      renderModal()
-      expect(screen.queryByText('Целевая сумма')).not.toBeInTheDocument()
-    })
-
-    it('shows target checkbox for fund type', async () => {
+    it('показывает поле целевой суммы после включения «Это цель»', async () => {
       const user = userEvent.setup()
       renderModal()
-      await user.selectOptions(screen.getByRole('combobox'), 'fund')
-      expect(screen.getByLabelText('Сумма фонда')).toBeInTheDocument()
+      await user.click(screen.getByLabelText('Это цель'))
+      expect(screen.getByText('Целевая сумма *')).toBeInTheDocument()
     })
 
-    it('shows target checkbox for goal type', async () => {
+    it('скрывает поле целевой суммы после выключения «Это цель»', async () => {
       const user = userEvent.setup()
       renderModal()
-      await user.selectOptions(screen.getByRole('combobox'), 'goal')
-      expect(screen.getByLabelText('Целевая сумма *')).toBeInTheDocument()
+      await user.click(screen.getByLabelText('Это цель'))
+      expect(screen.getByText('Целевая сумма *')).toBeInTheDocument()
+      await user.click(screen.getByLabelText('Это цель'))
+      expect(screen.queryByText('Целевая сумма *')).not.toBeInTheDocument()
     })
 
     it('calls onSubmit with form data on submit', async () => {
@@ -93,23 +90,10 @@ describe('EnvelopeModal', () => {
       renderModal({})
       expect(screen.getByText('Сохранить')).toBeInTheDocument()
     })
-  })
 
-  describe('target fields', () => {
-    it('shows target input when checkbox is enabled for fund', async () => {
-      const user = userEvent.setup()
-      renderModal()
-      await user.selectOptions(screen.getByRole('combobox'), 'fund')
-      await user.click(screen.getByLabelText('Сумма фонда'))
-      expect(screen.getByText('Сумма')).toBeInTheDocument()
-    })
-
-    it('shows target input when checkbox is enabled for goal', async () => {
-      const user = userEvent.setup()
-      renderModal()
-      await user.selectOptions(screen.getByRole('combobox'), 'goal')
-      await user.click(screen.getByLabelText('Целевая сумма *'))
-      expect(screen.getByText('Цель')).toBeInTheDocument()
+    it('показывает целевую сумму если конверт isGoal с target', () => {
+      renderModal({ isGoal: true, target: 50000 })
+      expect(screen.getByText('Целевая сумма *')).toBeInTheDocument()
     })
   })
 

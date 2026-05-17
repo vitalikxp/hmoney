@@ -1,7 +1,7 @@
 interface Props {
   spendingBalance: number
   reserveBalance: number
-  goalsBalance: number
+  envelopesBalance: number
   total: number
 }
 
@@ -27,7 +27,7 @@ function BreakdownRow({ icon, label, balance }: BreakdownRowProps) {
   )
 }
 
-export default function BudgetSummaryWidget({ spendingBalance, reserveBalance, goalsBalance, total }: Props) {
+export default function BudgetSummaryWidget({ spendingBalance, reserveBalance, envelopesBalance, total }: Props) {
   return (
     <div className="card-glow overflow-hidden rounded-lg border border-hairline">
       <div className="px-4 py-4">
@@ -46,7 +46,7 @@ export default function BudgetSummaryWidget({ spendingBalance, reserveBalance, g
       <div>
         <BreakdownRow icon="🐝" label="ХаниМани" balance={spendingBalance} />
         <BreakdownRow icon="🛡️" label="Резервы" balance={reserveBalance} />
-        <BreakdownRow icon="🏦" label="Накопления" balance={goalsBalance} />
+        <BreakdownRow icon="✉️" label="Конверты" balance={envelopesBalance} />
       </div>
     </div>
   )

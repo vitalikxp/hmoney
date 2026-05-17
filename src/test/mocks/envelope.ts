@@ -4,9 +4,9 @@ export function createMockEnvelope(overrides?: Partial<Envelope>): Envelope {
   return {
     id: 'env-test-id',
     name: 'Тестовый конверт',
-    type: 'spending',
+    isGoal: false,
     balance: 5000,
-    icon: '🧃',
+    icon: '✉️',
     isBuiltIn: false,
     sortOrder: 0,
     isHidden: false,

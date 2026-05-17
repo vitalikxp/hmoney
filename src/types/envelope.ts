@@ -1,12 +1,10 @@
 import type { Timestamp } from 'firebase/firestore'
 
-export type EnvelopeType = 'spending' | 'reserve' | 'fund' | 'goal'
-
 export interface Envelope {
   id: string
   name: string
-  type: EnvelopeType
   balance: number
+  isGoal: boolean
   target?: number
   icon?: string
   isBuiltIn?: boolean

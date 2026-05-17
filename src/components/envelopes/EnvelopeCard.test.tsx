@@ -20,7 +20,7 @@ describe('EnvelopeCard', () => {
 
   it('renders default icon when no icon set', () => {
     renderCard({ icon: undefined })
-    expect(screen.getByText('🧃')).toBeInTheDocument()
+    expect(screen.getByText('✉️')).toBeInTheDocument()
   })
 
   it('renders custom icon', () => {
@@ -28,24 +28,24 @@ describe('EnvelopeCard', () => {
     expect(screen.getByText('🏦')).toBeInTheDocument()
   })
 
-  it('shows type label', () => {
-    renderCard({ type: 'reserve' })
-    expect(screen.getByText('Резервы')).toBeInTheDocument()
+  it('показывает badge «цель» когда isGoal true', () => {
+    renderCard({ isGoal: true })
+    expect(screen.getByText('цель')).toBeInTheDocument()
   })
 
-  it('shows target for fund type', () => {
-    renderCard({ type: 'fund', target: 100000 })
+  it('не показывает badge «цель» когда isGoal false', () => {
+    renderCard({ isGoal: false, target: undefined })
+    expect(screen.queryByText('цель')).not.toBeInTheDocument()
+  })
+
+  it('shows target amount when target is set', () => {
+    renderCard({ target: 100000 })
     expect(screen.getByText(/цель 100 000₽/)).toBeInTheDocument()
   })
 
-  it('shows target for goal type', () => {
-    renderCard({ type: 'goal', target: 500000 })
-    expect(screen.getByText(/цель 500 000₽/)).toBeInTheDocument()
-  })
-
-  it('does not show target for spending type', () => {
-    renderCard({ type: 'spending' })
-    expect(screen.queryByText(/цель/)).not.toBeInTheDocument()
+  it('does not show target when target is absent', () => {
+    renderCard({ target: undefined, isGoal: false })
+    expect(screen.queryByText(/цель \d/)).not.toBeInTheDocument()
   })
 
   it('shows "скрыт" badge when isHidden is true', () => {
