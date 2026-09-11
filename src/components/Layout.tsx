@@ -9,6 +9,7 @@ interface Props {
 const NAV_ITEMS = [
   { to: '/accounts', label: 'Счета', icon: '💳' },
   { to: '/envelopes', label: 'Конверты', icon: '📨' },
+  { to: '/transactions', label: 'Транзакции', icon: '📝' },
 ]
 
 export default function Layout({ children }: Props) {

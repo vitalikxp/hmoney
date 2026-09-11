@@ -1,6 +1,7 @@
 import type { Account, CreateAccountInput, UpdateAccountInput } from '../../../types/account'
 import type { Envelope, CreateEnvelopeInput, UpdateEnvelopeInput } from '../../../types/envelope'
-import type { AccountRepository, AuthProvider, EnvelopeRepository } from '../types'
+import type { Transaction, CreateTransactionInput, UpdateTransactionInput } from '../../../types/transaction'
+import type { AccountRepository, AuthProvider, EnvelopeRepository, TransactionRepository } from '../types'
 import { BackendError } from '../types'
 
 // DEV-адаптер: данные в localStorage, пароль хранится в открытом виде.
@@ -33,7 +34,7 @@ function newId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-function userKey(uid: string, collection: 'accounts' | 'envelopes'): string {
+function userKey(uid: string, collection: 'accounts' | 'envelopes' | 'transactions'): string {
   return `hmoney:data:${uid}:${collection}`
 }
 
@@ -101,6 +102,40 @@ export const localEnvelopes: EnvelopeRepository = {
   },
 }
 
+export const localTransactions: TransactionRepository = {
+  async fetch(userId) {
+    const transactions = readJson<Transaction[]>(userKey(userId, 'transactions'), [])
+    return transactions.sort((a, b) => a.createdAt - b.createdAt)
+  },
+
+  async create(userId, data: CreateTransactionInput) {
+    const now = Date.now()
+    const transaction: Transaction = {
+      ...data,
+      id: newId('tx'),
+      createdAt: now,
+      updatedAt: now,
+    }
+    const transactions = readJson<Transaction[]>(userKey(userId, 'transactions'), [])
+    transactions.push(transaction)
+    writeJson(userKey(userId, 'transactions'), transactions)
+    return transaction.id
+  },
+
+  async update(userId, transactionId, data: UpdateTransactionInput) {
+    const transactions = readJson<Transaction[]>(userKey(userId, 'transactions'), [])
+    const next = transactions.map((t) =>
+      t.id === transactionId ? { ...t, ...data, updatedAt: Date.now() } : t,
+    )
+    writeJson(userKey(userId, 'transactions'), next)
+  },
+
+  async delete(userId, transactionId) {
+    const transactions = readJson<Transaction[]>(userKey(userId, 'transactions'), [])
+    writeJson(userKey(userId, 'transactions'), transactions.filter((t) => t.id !== transactionId))
+  },
+}
+
 export const localAuth: AuthProvider = {
   subscribe(onChange) {
     const uid = localStorage.getItem(SESSION_KEY)
@@ -143,6 +178,7 @@ export const localAuth: AuthProvider = {
     writeJson(USERS_KEY, readUsers().filter((u) => u.uid !== uid))
     localStorage.removeItem(userKey(uid, 'accounts'))
     localStorage.removeItem(userKey(uid, 'envelopes'))
+    localStorage.removeItem(userKey(uid, 'transactions'))
     localStorage.removeItem(SESSION_KEY)
   },
 }

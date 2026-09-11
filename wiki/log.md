@@ -6,6 +6,19 @@ status: updated
 
 # Журнал изменений
 
+## [2026-09-11] реализация | Страница «Транзакции»: список по дням, NL-ввод, дельты балансов
+
+- `types/transaction.ts`: Transaction (type/date/amount/category/description/accountId/envelopeId, нейтральные timestamps); `TransactionRepository` в backend (оба адаптера: firestore `users/{uid}/transactions`, local `hmoney:data:{uid}:transactions`)
+- `transactionService` (фассад) + `transactionStore`: CRUD + **дельты балансов** (расход: счёт−, конверт−; доход: счёт+, конверт+; правка/удаление откатывают старые дельты; ХаниМани вычисляется сам)
+- `parseTransactionInput` — NL-парсер `5*250 яблоки (комментарий)`, поддержка запятой, описание без суммы
+- UI (`src/components/transactions/`): `TransactionCard` (кружок с буквой категории, ±сумма), `TransactionDayGroup` (сворачиваемый блок дня с итогами −/+), `TransactionList` (группировка по дням, батчи 30 дней + IntersectionObserver «Показать ещё»), `TransactionModal` (NL-поле с подсказкой парсинга, дата, категория на ходу, счёт/конверт select)
+- `TransactionsPage` на `/transactions` (третий пункт навигации, desktop + bottom menu); пустое состояние как у счетов
+- Тесты: +52 (парсер, store-дельты, адаптер, 4 компонента, страница). Итого **203 unit** (25 файлов)
+- E2E: `transactions.spec.ts` (6 тестов) + POM `TransactionsPage.ts`; production-проект игнорирует его. Итого **29 e2e** (24 local + 5 production), все зелёные
+- **Исправлена скрытая регрессия миграции на Preact**: core preact НЕ нормализует `onChange` (это нативный change на blur) — все формы обновляли state только при blur. Заменено на `onInput` во всех формах (AccountModal, EnvelopeModal, TransactionModal, Login, Register)
+- Ловушка: модал транзакций при первом открытии не подставлял счёт (список грузился позже) → `required` select молча блокировал submit; добавлена синхронизация + подсказка «Сначала создайте счёт»
+- Wiki: `Данные.md` (модель Transaction: реализованная часть + план расширений), `Компоненты.md` (+TransactionsPage дерево), `ФТ.md` (TR-01..05/09/10, EN-07 → ✅)
+
 ## [2026-09-11] требования | ТЗ перестроено: полная карта функций + приоритеты
 
 - `ТЗ.md`: пересобран — принципы (личный проект: без онбординга/партнёрки; адаптивный UI на каждом этапе), карта функций HoneyMoney → hmoney с разметкой ✅/MVP-этап/post-MVP/out of scope, план работ со статусами (этапы 1–3 ✅, Э4 🚧)

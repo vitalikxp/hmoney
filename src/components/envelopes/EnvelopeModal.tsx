@@ -55,7 +55,7 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
               type="text"
               required
               value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.currentTarget.value })}
+              onInput={(e) => setForm({ ...form, name: e.currentTarget.value })}
               placeholder="Продукты, Ремонт, …"
               className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink placeholder:text-muted/50 outline-none focus:border-yellow transition-colors"
             />
@@ -98,7 +98,7 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
               type="checkbox"
               id="isGoal"
               checked={form.isGoal}
-              onChange={(e) => setForm({ ...form, isGoal: e.currentTarget.checked, target: e.currentTarget.checked ? form.target : undefined })}
+              onInput={(e) => setForm({ ...form, isGoal: e.currentTarget.checked, target: e.currentTarget.checked ? form.target : undefined })}
               className="accent-yellow"
             />
             <label htmlFor="isGoal" className="text-sm text-muted">Это цель</label>

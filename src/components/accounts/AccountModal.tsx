@@ -58,7 +58,7 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
               type="text"
               required
               value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.currentTarget.value })}
+              onInput={(e) => setForm({ ...form, name: e.currentTarget.value })}
               placeholder="Наличные, Карта, …"
               className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink placeholder:text-muted/50 outline-none focus:border-yellow transition-colors"
             />
@@ -101,7 +101,7 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
               type="checkbox"
               id="creditLimit"
               checked={creditEnabled}
-              onChange={(e) => setCreditEnabled(e.currentTarget.checked)}
+              onInput={(e) => setCreditEnabled(e.currentTarget.checked)}
               className="accent-yellow"
             />
             <label htmlFor="creditLimit" className="text-sm text-muted">Кредитный лимит</label>
@@ -124,7 +124,7 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
                 type="checkbox"
                 id="includeInBalance"
                 checked={form.includeInBalance}
-                onChange={(e) => setForm({ ...form, includeInBalance: e.currentTarget.checked })}
+                onInput={(e) => setForm({ ...form, includeInBalance: e.currentTarget.checked })}
                 className="accent-yellow"
               />
               <label htmlFor="includeInBalance" className="text-sm text-muted">Участвует в общем балансе</label>

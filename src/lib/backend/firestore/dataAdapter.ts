@@ -11,7 +11,8 @@ import {
 } from 'firebase/firestore'
 import type { Account } from '../../../types/account'
 import type { Envelope } from '../../../types/envelope'
-import type { AccountRepository, EnvelopeRepository } from '../types'
+import type { Transaction } from '../../../types/transaction'
+import type { AccountRepository, EnvelopeRepository, TransactionRepository } from '../types'
 import { getFirebase } from './firebase'
 
 // Граница сериализации: Firestore хранит Timestamp, домен — number (epoch ms)
@@ -28,6 +29,11 @@ function accountsRef(userId: string) {
 function envelopesRef(userId: string) {
   const { db } = getFirebase()
   return collection(db, 'users', userId, 'envelopes')
+}
+
+function transactionsRef(userId: string) {
+  const { db } = getFirebase()
+  return collection(db, 'users', userId, 'transactions')
 }
 
 export const accountsRepository: AccountRepository = {
@@ -81,5 +87,32 @@ export const envelopesRepository: EnvelopeRepository = {
 
   async delete(userId, envelopeId) {
     await deleteDoc(doc(envelopesRef(userId), envelopeId))
+  },
+}
+
+export const transactionsRepository: TransactionRepository = {
+  async fetch(userId) {
+    const snapshot = await getDocs(query(transactionsRef(userId), orderBy('createdAt')))
+    return snapshot.docs.map((d) => mapDoc<Transaction>(d.id, d.data() as never))
+  },
+
+  async create(userId, data) {
+    const docRef = await addDoc(transactionsRef(userId), {
+      ...data,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+    return docRef.id
+  },
+
+  async update(userId, transactionId, data) {
+    await updateDoc(doc(transactionsRef(userId), transactionId), {
+      ...data,
+      updatedAt: serverTimestamp(),
+    })
+  },
+
+  async delete(userId, transactionId) {
+    await deleteDoc(doc(transactionsRef(userId), transactionId))
   },
 }

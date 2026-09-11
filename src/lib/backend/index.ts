@@ -1,10 +1,10 @@
 import type { Backend } from './types'
-import { accountsRepository, envelopesRepository } from './firestore/dataAdapter'
+import { accountsRepository, envelopesRepository, transactionsRepository } from './firestore/dataAdapter'
 import { createProfile as createFirestoreProfile, firebaseAuth } from './firestore/authAdapter'
-import { localAccounts, localEnvelopes, localAuth, createProfile as createLocalProfile } from './local/adapter'
+import { localAccounts, localEnvelopes, localTransactions, localAuth, createProfile as createLocalProfile } from './local/adapter'
 
 export { BackendError } from './types'
-export type { Backend, User, Repository, AccountRepository, EnvelopeRepository, AuthProvider } from './types'
+export type { Backend, User, Repository, AccountRepository, EnvelopeRepository, TransactionRepository, AuthProvider } from './types'
 
 const DRIVER = import.meta.env.VITE_STORAGE_DRIVER ?? 'firestore'
 
@@ -16,6 +16,7 @@ const firestoreBackend: Backend = {
   auth: firebaseAuth,
   accounts: accountsRepository,
   envelopes: envelopesRepository,
+  transactions: transactionsRepository,
   createProfile: createFirestoreProfile,
 }
 
@@ -23,6 +24,7 @@ const localBackend: Backend = {
   auth: localAuth,
   accounts: localAccounts,
   envelopes: localEnvelopes,
+  transactions: localTransactions,
   createProfile: createLocalProfile,
 }
 

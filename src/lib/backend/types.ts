@@ -1,5 +1,6 @@
 import type { Account, CreateAccountInput, UpdateAccountInput } from '../../types/account'
 import type { Envelope, CreateEnvelopeInput, UpdateEnvelopeInput } from '../../types/envelope'
+import type { Transaction, CreateTransactionInput, UpdateTransactionInput } from '../../types/transaction'
 
 export interface User {
   uid: string
@@ -28,6 +29,7 @@ export interface Repository<T, CreateIn, UpdateIn> {
 
 export type AccountRepository = Repository<Account, CreateAccountInput, UpdateAccountInput>
 export type EnvelopeRepository = Repository<Envelope, CreateEnvelopeInput, UpdateEnvelopeInput>
+export type TransactionRepository = Repository<Transaction, CreateTransactionInput, UpdateTransactionInput>
 
 export interface AuthProvider {
   subscribe(onChange: (user: User | null) => void): void
@@ -41,5 +43,6 @@ export interface Backend {
   auth: AuthProvider
   accounts: AccountRepository
   envelopes: EnvelopeRepository
+  transactions: TransactionRepository
   createProfile(userId: string, email: string): Promise<void>
 }

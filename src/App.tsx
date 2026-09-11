@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import AccountsPage from './pages/AccountsPage'
 import EnvelopesPage from './pages/EnvelopesPage'
+import TransactionsPage from './pages/TransactionsPage'
 
 function App() {
   return (
@@ -24,6 +25,14 @@ function App() {
           element={
             <AuthGuard>
               <EnvelopesPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <AuthGuard>
+              <TransactionsPage />
             </AuthGuard>
           }
         />

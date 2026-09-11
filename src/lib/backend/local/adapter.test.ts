@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { localAuth, localAccounts, localEnvelopes, createProfile } from './adapter'
+import { localAuth, localAccounts, localEnvelopes, localTransactions, createProfile } from './adapter'
 import type { Account, CreateAccountInput } from '../../../types/account'
 import type { CreateEnvelopeInput } from '../../../types/envelope'
+import type { CreateTransactionInput } from '../../../types/transaction'
 
 function accountInput(overrides?: Partial<CreateAccountInput>): CreateAccountInput {
   return {
@@ -155,6 +156,50 @@ describe('local adapter', () => {
       const { uid } = await localAuth.register('a@b.dev', 'Pa$$w0rd')
 
       await expect(createProfile(uid, 'a@b.dev')).resolves.toBeUndefined()
+    })
+  })
+
+  describe('transactions', () => {
+    function transactionInput(overrides?: Partial<CreateTransactionInput>): CreateTransactionInput {
+      return {
+        type: 'expense',
+        date: 1700000000000,
+        amount: 1000,
+        category: 'Продукты',
+        accountId: 'acc-1',
+        envelopeId: null,
+        ...overrides,
+      }
+    }
+
+    it('create + fetch возвращает транзакцию с id и timestamps', async () => {
+      const { uid } = await localAuth.register('a@b.dev', 'Pa$$w0rd')
+
+      const id = await localTransactions.create(uid, transactionInput({ category: 'Транспорт' }))
+      const transactions = await localTransactions.fetch(uid)
+
+      expect(transactions).toHaveLength(1)
+      expect(transactions[0]).toMatchObject({ id, category: 'Транспорт', amount: 1000 })
+      expect(typeof transactions[0].createdAt).toBe('number')
+    })
+
+    it('update меняет только целевую транзакцию', async () => {
+      const { uid } = await localAuth.register('a@b.dev', 'Pa$$w0rd')
+      const id = await localTransactions.create(uid, transactionInput({ category: 'Продукты' }))
+
+      await localTransactions.update(uid, id, { amount: 2500 })
+      const transactions = await localTransactions.fetch(uid)
+
+      expect(transactions[0].amount).toBe(2500)
+      expect(transactions[0].category).toBe('Продукты')
+    })
+
+    it('delete удаляет транзакцию', async () => {
+      const { uid } = await localAuth.register('a@b.dev', 'Pa$$w0rd')
+      const id = await localTransactions.create(uid, transactionInput())
+
+      await localTransactions.delete(uid, id)
+      expect(await localTransactions.fetch(uid)).toHaveLength(0)
     })
   })
 })

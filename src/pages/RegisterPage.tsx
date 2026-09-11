@@ -101,7 +101,7 @@ export default function RegisterPage() {
               required
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
+              onInput={(e) => setEmail(e.currentTarget.value)}
               className="w-full px-3 py-2.5 bg-surface text-ink rounded-lg border border-hairline focus:border-yellow focus:outline-none text-sm transition-colors"
               placeholder="mail@example.com"
             />
@@ -115,7 +115,7 @@ export default function RegisterPage() {
               required
               autoComplete="new-password"
               value={password}
-              onChange={(e) => setPassword(e.currentTarget.value)}
+              onInput={(e) => setPassword(e.currentTarget.value)}
               className="w-full px-3 py-2.5 bg-surface text-ink rounded-lg border border-hairline focus:border-yellow focus:outline-none text-sm transition-colors"
               placeholder="Не менее 6 символов"
             />
@@ -129,7 +129,7 @@ export default function RegisterPage() {
               required
               autoComplete="new-password"
               value={confirm}
-              onChange={(e) => setConfirm(e.currentTarget.value)}
+              onInput={(e) => setConfirm(e.currentTarget.value)}
               className="w-full px-3 py-2.5 bg-surface text-ink rounded-lg border border-hairline focus:border-yellow focus:outline-none text-sm transition-colors"
               placeholder="Повторите пароль"
             />
