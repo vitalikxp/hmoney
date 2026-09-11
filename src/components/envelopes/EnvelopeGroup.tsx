@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'preact/hooks'
 import type { Envelope } from '../../types/envelope'
 import EnvelopeCard from './EnvelopeCard'
 

@@ -41,6 +41,7 @@ hmoney — SPA на React, развёрнутое на GitHub Pages.
 12. **E2E: Playwright** — два проекта (local на localStorage-драйвере + production); Page Object Model; очистка тестовых пользователей через Firebase Admin SDK
 13. **Двухуровневая модель конвертов** — ХаниМани вычисляется (Σ счетов − Σ остальных конвертов), Резервы хранятся как единственный системный конверт (`isBuiltIn`), плюс до 20 пользовательских (fund/goal). Лимит проверяется в store перед созданием
 14. **Backend-абстракция (anti vendor-lock)** — `src/lib/backend/` с интерфейсами `Backend`/`AuthProvider`/`Repository`; адаптеры `firestore` (production) и `local` (dev, localStorage); драйвер по `VITE_STORAGE_DRIVER`; доменные типы нейтральны (`Timestamp` → `number`)
+15. **Preact 10 вместо React 19** — через `preact/compat`; настоящий React исключён из графа shim-пакетами (`vendor/react-shim`); `react-number-format` заменён собственным `MoneyInput`; бандл −25%
 
 ## Разделы
 - [Обоснование стека](./Стек.md)

@@ -1,11 +1,12 @@
-import { useCallback, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useRef, useState } from 'preact/hooks'
+import type { TargetedEvent, TargetedMouseEvent } from 'preact'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { BackendError } from '../lib/backend'
 import { useAuthStore } from '../stores/authStore'
 
 export default function RegisterPage() {
   const glowRef = useRef<HTMLDivElement>(null)
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: TargetedMouseEvent<HTMLDivElement>) => {
     if (glowRef.current) {
       const rect = glowRef.current.getBoundingClientRect()
       glowRef.current.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`)
@@ -32,7 +33,7 @@ export default function RegisterPage() {
     return <Navigate to="/" replace />
   }
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: TargetedEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
 
@@ -100,7 +101,7 @@ export default function RegisterPage() {
               required
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.currentTarget.value)}
               className="w-full px-3 py-2.5 bg-surface text-ink rounded-lg border border-hairline focus:border-yellow focus:outline-none text-sm transition-colors"
               placeholder="mail@example.com"
             />
@@ -114,7 +115,7 @@ export default function RegisterPage() {
               required
               autoComplete="new-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.currentTarget.value)}
               className="w-full px-3 py-2.5 bg-surface text-ink rounded-lg border border-hairline focus:border-yellow focus:outline-none text-sm transition-colors"
               placeholder="Не менее 6 символов"
             />
@@ -128,7 +129,7 @@ export default function RegisterPage() {
               required
               autoComplete="new-password"
               value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
+              onChange={(e) => setConfirm(e.currentTarget.value)}
               className="w-full px-3 py-2.5 bg-surface text-ink rounded-lg border border-hairline focus:border-yellow focus:outline-none text-sm transition-colors"
               placeholder="Повторите пароль"
             />

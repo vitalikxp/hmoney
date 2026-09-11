@@ -1,7 +1,8 @@
 import { Navigate } from 'react-router-dom'
+import type { ComponentChildren } from 'preact'
 import { useAuthStore } from '../stores/authStore'
 
-export default function AuthGuard({ children }: { children: React.ReactNode }) {
+export default function AuthGuard({ children }: { children: ComponentChildren }) {
   const { user, loading } = useAuthStore()
 
   if (loading) {

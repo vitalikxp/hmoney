@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'preact/hooks'
 import { useAccountStore } from '../stores/accountStore'
 import AccountList from '../components/accounts/AccountList'
 import AccountModal from '../components/accounts/AccountModal'

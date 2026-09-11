@@ -1,0 +1,16 @@
+{
+  "name": "react",
+  "version": "19.3.0",
+  "description": "Shim: react -> preact/compat (anti vendor-lock, dev/CI only)",
+  "private": true,
+  "main": "index.cjs",
+  "module": "index.mjs",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    },
+    "./package.json": "./package.json"
+  }
+}

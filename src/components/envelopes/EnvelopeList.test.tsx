@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/preact'
 import { describe, it, expect, vi } from 'vitest'
 import EnvelopeList from './EnvelopeList'
 import { createMockEnvelope } from '../../test/mocks/envelope'

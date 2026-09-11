@@ -35,4 +35,4 @@ Dev-сервер по умолчанию работает на **local-драй�
 
 ## Технологии
 
-React, TypeScript, Vite, Tailwind CSS, pnpm, Firebase Firestore/Auth (адаптер), localStorage-адаптер (dev), PWA (в плане).
+Preact (через preact/compat + shim-пакеты vendor/), TypeScript, Vite, Tailwind CSS, pnpm, Firebase Firestore/Auth (адаптер), localStorage-адаптер (dev), PWA (в плане).

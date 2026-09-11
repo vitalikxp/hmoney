@@ -6,6 +6,25 @@ status: updated
 
 # Журнал изменений
 
+## [2026-09-11] архитектура | Миграция React 19 → Preact 10 (compat)
+
+- Зависимости: удалены `react`, `react-dom`, `@types/react`, `@types/react-dom`, `@testing-library/react`, `@vitejs/plugin-react`, `react-number-format`; добавлены `preact`, `@testing-library/preact`, `@preact/preset-vite`
+- **Shim-пакеты** `vendor/react-shim`/`vendor/react-dom-shim` (re-export `preact/compat`), объявлены в `package.json` как `react`/`react-dom` — pnpm peer-разрешение подставляет их всем зависимостям; настоящий React полностью исчез из графа. Это решило проблему экстернализованных в vitest dep-пакетов (react-router/react-number-format тянули настоящий react в обход vite-алиасов)
+- Ловушка с раздельными сборками preact (CJS ≠ ESM, разное hooks-состояние): shim экспортирует только `default`-условие (ESM), Node 24 умеет `require(esm)` — вся цепочка живёт в одном инстансе
+- `vite.config.ts`/`vitest.config.ts`: `@vitejs/plugin-react` → `@preact/preset-vite`; `tsconfig.app.json`: `jsxImportSource: preact`, `esModuleInterop`
+- `main.tsx`: `createRoot` из `preact/compat/client`, `StrictMode` убран (no-op в compat)
+- Типы: глобальные `React.ReactNode/FormEvent/MouseEvent` → `ComponentChildren`/`TargetedEvent<T>`/`TargetedMouseEvent<T>` из `preact`; обработчики — `e.currentTarget` вместо `e.target` (в preact-типах target — голый EventTarget); 9 файлов импортов `react` → `preact/hooks`
+- **MoneyInput переписан собственными силами** (тот же API: `value`/`onValueChange({floatValue})`/`allowNegative`): react-number-format 5.4.5 несовместим с preact/compat — зацикливание при вводе (render ок, ввод через userEvent зависает); заменён react-number-format → anti vendor-lock
+- Тестовый стек: `@testing-library/react` → `@testing-library/preact` (14 файлов, setup.ts); zustand/роутинг — без единой правки
+- Бандл: 852.68 kB raw / 255.33 kB gzip → **642.67 kB / 191.04 kB (−25%)**
+- Верификация: `pnpm test` 151/151 ✅, build ✅, e2e 23/23 ✅ (18 local на localStorage + 5 production)
+- Wiki: `Стек.md` (Preact + shim-механика), `Исследования/Preact_vs_React.md` (обновлён вывод), GEMINI/README/AGENTS обновлены
+
+## [2026-09-11] исследование | Preact vs React — актуальность
+
+- Новая страница `Исследования/Preact_vs_React.md`: Preact активен (10.29.x, v11 в бете, React 19 compat), но для hmoney не оправдан — бандл доминирует Firebase SDK, выигрыш ~2% gzip, риски в @testing-library/react
+- `index.md`: страница добавлена в каталог
+
 ## [2026-09-11] архитектура | Backend-абстракция: удаление vendor-lock на Firestore
 
 - `src/lib/backend/`: нейтральные интерфейсы (`Backend`, `AuthProvider`, `Repository`, `BackendError`, `User`) + фабрика драйвера по `VITE_STORAGE_DRIVER`

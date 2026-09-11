@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'preact/hooks'
+import type { TargetedEvent } from 'preact'
 import type { Envelope, CreateEnvelopeInput, UpdateEnvelopeInput } from '../../types/envelope'
 import { ICONS, DEFAULT_ICON } from './constants'
 import MoneyInput from '../ui/MoneyInput'
@@ -24,7 +25,7 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
     setForm(toInput(envelope))
   }, [envelope])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: TargetedEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!form.name.trim()) return
     setBusy(true)
@@ -54,7 +55,7 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
               type="text"
               required
               value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              onChange={(e) => setForm({ ...form, name: e.currentTarget.value })}
               placeholder="Продукты, Ремонт, …"
               className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink placeholder:text-muted/50 outline-none focus:border-yellow transition-colors"
             />
@@ -88,7 +89,7 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
               onValueChange={(v) => setForm({ ...form, balance: v.floatValue ?? 0 })}
               allowNegative
               required
-              onFocus={(e) => e.target.select()}
+              onFocus={(e) => e.currentTarget.select()}
             />
           </div>
 
@@ -97,7 +98,7 @@ export default function EnvelopeModal({ envelope, onSubmit, onClose }: Props) {
               type="checkbox"
               id="isGoal"
               checked={form.isGoal}
-              onChange={(e) => setForm({ ...form, isGoal: e.target.checked, target: e.target.checked ? form.target : undefined })}
+              onChange={(e) => setForm({ ...form, isGoal: e.currentTarget.checked, target: e.currentTarget.checked ? form.target : undefined })}
               className="accent-yellow"
             />
             <label htmlFor="isGoal" className="text-sm text-muted">Это цель</label>

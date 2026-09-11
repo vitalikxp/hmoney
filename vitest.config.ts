@@ -1,9 +1,9 @@
 import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
+import preact from '@preact/preset-vite'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [preact(), tailwindcss()],
   envPrefix: ['VITE_', 'FIREBASE_'],
   test: {
     environment: 'jsdom',

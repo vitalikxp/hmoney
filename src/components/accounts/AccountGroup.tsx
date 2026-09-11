@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'preact/hooks'
 import type { Account } from '../../types/account'
 import AccountCard from './AccountCard'
 

@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'preact/hooks'
+import type { TargetedEvent } from 'preact'
 import type { Account, CreateAccountInput, UpdateAccountInput } from '../../types/account'
 import MoneyInput from '../ui/MoneyInput'
 
@@ -27,7 +28,7 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
     setCreditEnabled(account?.creditLimit != null && account.creditLimit > 0)
   }, [account])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: TargetedEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!form.name.trim()) return
     setBusy(true)
@@ -57,7 +58,7 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
               type="text"
               required
               value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              onChange={(e) => setForm({ ...form, name: e.currentTarget.value })}
               placeholder="Наличные, Карта, …"
               className="w-full px-3 py-2 bg-elevated border border-hairline rounded-lg text-ink placeholder:text-muted/50 outline-none focus:border-yellow transition-colors"
             />
@@ -91,7 +92,7 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
               onValueChange={(v) => setForm({ ...form, balance: v.floatValue ?? 0 })}
               allowNegative
               required
-              onFocus={(e) => e.target.select()}
+              onFocus={(e) => e.currentTarget.select()}
             />
           </div>
 
@@ -100,7 +101,7 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
               type="checkbox"
               id="creditLimit"
               checked={creditEnabled}
-              onChange={(e) => setCreditEnabled(e.target.checked)}
+              onChange={(e) => setCreditEnabled(e.currentTarget.checked)}
               className="accent-yellow"
             />
             <label htmlFor="creditLimit" className="text-sm text-muted">Кредитный лимит</label>
@@ -123,7 +124,7 @@ export default function AccountModal({ account, onSubmit, onClose }: Props) {
                 type="checkbox"
                 id="includeInBalance"
                 checked={form.includeInBalance}
-                onChange={(e) => setForm({ ...form, includeInBalance: e.target.checked })}
+                onChange={(e) => setForm({ ...form, includeInBalance: e.currentTarget.checked })}
                 className="accent-yellow"
               />
               <label htmlFor="includeInBalance" className="text-sm text-muted">Участвует в общем балансе</label>

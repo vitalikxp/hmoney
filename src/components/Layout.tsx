@@ -1,8 +1,9 @@
 import { NavLink } from 'react-router-dom'
+import type { ComponentChildren } from 'preact'
 import { useAuthStore } from '../stores/authStore'
 
 interface Props {
-  children: React.ReactNode
+  children: ComponentChildren
 }
 
 const NAV_ITEMS = [

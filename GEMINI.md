@@ -1,6 +1,6 @@
 # Инструкции по проекту: hmoney
 
-Этот проект представляет собой приложение для отслеживания личных финансов ("hmoney"), упрощенный клон HoneyMoney. Оно разработано как современное React SPA с упором на высококонтрастный дизайн и тщательное тестирование.
+Этот проект представляет собой приложение для отслеживания личных финансов ("hmoney"), упрощенный клон HoneyMoney. Оно разработано как современное Preact SPA с упором на высококонтрастный дизайн и тщательное тестирование.
 
 ## Основные требования
 
@@ -22,7 +22,8 @@
 
 ## Технологический стек и архитектура
 
-- **Frontend:** React 19 (SPA) + TypeScript + Vite.
+- **Frontend:** Preact 10 + `preact/compat` (SPA) + TypeScript + Vite. Настоящий React исключён: shim-пакеты `vendor/react-shim`/`vendor/react-dom-shim` объявлены как `react`/`react-dom` в `package.json`.
+- **Экосистема React-пакетов** (react-router-dom 7, zustand) работает без изменений через shim; `react-number-format` удалён — используется собственный `MoneyInput`.
 - **Стилизация:** Tailwind CSS v4 (используя `@tailwindcss/vite`).
 - **Управление состоянием:** Zustand (`src/stores/`).
 - **Backend-абстракция:** `src/lib/backend/` — интерфейсы `Backend`/`AuthProvider`/`Repository` + два адаптера:

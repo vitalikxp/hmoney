@@ -124,7 +124,7 @@ wiki/
 ### Стек
 
 - **Runner:** Vitest (через `vitest run` / `vitest`)
-- **Рендер:** `@testing-library/react`
+- **Рендер:** `@testing-library/preact`
 - **Матчеры:** `@testing-library/jest-dom/vitest` (`toBeInTheDocument`, `toHaveTextContent`)
 - **События:** `@testing-library/user-event` (`user.click`, `user.type`)
 - **Окружение:** `jsdom`
