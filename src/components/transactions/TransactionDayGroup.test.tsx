@@ -13,6 +13,8 @@ describe('TransactionDayGroup', () => {
       <TransactionDayGroup
         date={DAY}
         transactions={[createMockTransaction()]}
+        accountNames={new Map()}
+        envelopeNames={new Map()}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
       />,
@@ -30,6 +32,8 @@ describe('TransactionDayGroup', () => {
           createMockTransaction({ amount: 1000 }),
           createMockTransaction({ type: 'income', amount: 5000, id: 'tx-2', category: 'Зарплата' }),
         ]}
+        accountNames={new Map()}
+        envelopeNames={new Map()}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
       />,
@@ -44,6 +48,8 @@ describe('TransactionDayGroup', () => {
       <TransactionDayGroup
         date={DAY}
         transactions={[createMockTransaction()]}
+        accountNames={new Map()}
+        envelopeNames={new Map()}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
       />,

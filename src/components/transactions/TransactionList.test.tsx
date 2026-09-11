@@ -12,11 +12,18 @@ function txForDay(daysAgo: number, overrides?: Record<string, unknown>) {
   })
 }
 
+function txForFuture(daysAhead: number, overrides?: Record<string, unknown>) {
+  return txForDay(-daysAhead, overrides)
+}
+
 describe('TransactionList', () => {
   it('группирует транзакции по дням', () => {
     render(
       <TransactionList
         transactions={[txForDay(0, { id: 'a' }), txForDay(1, { id: 'b', category: 'Транспорт' })]}
+        accounts={[]}
+        envelopes={[]}
+        range={'past'}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
       />,
@@ -29,7 +36,7 @@ describe('TransactionList', () => {
   })
 
   it('показывает пустой контейнер без транзакций', () => {
-    const { container } = render(<TransactionList transactions={[]} onEdit={vi.fn()} onDelete={vi.fn()} />)
+    const { container } = render(<TransactionList transactions={[]} accounts={[]} envelopes={[]} range={'past'} onEdit={vi.fn()} onDelete={vi.fn()} />)
     expect(container.firstElementChild).toBeEmptyDOMElement()
   })
 
@@ -38,7 +45,7 @@ describe('TransactionList', () => {
     for (let i = 0; i < 40; i++) {
       many.push(txForDay(i, { id: `tx-${i}`, category: `Категория ${i}` }))
     }
-    render(<TransactionList transactions={many} onEdit={vi.fn()} onDelete={vi.fn()} />)
+    render(<TransactionList transactions={many} accounts={[]} envelopes={[]} range={'past'} onEdit={vi.fn()} onDelete={vi.fn()} />)
 
     // первый батч — 30 дней
     expect(screen.getByText('Категория 0')).toBeInTheDocument()
@@ -51,6 +58,9 @@ describe('TransactionList', () => {
     render(
       <TransactionList
         transactions={[txForDay(2, { id: 'old' }), txForDay(0, { id: 'new' })]}
+        accounts={[]}
+        envelopes={[]}
+        range={'past'}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
       />,
@@ -62,5 +72,104 @@ describe('TransactionList', () => {
     const today = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
     expect(first).toContain(today)
     expect(second).not.toContain(today)
+  })
+})
+
+describe('TransactionList: диапазоны', () => {
+  it('«past» скрывает будущие, сегодня виден', () => {
+    render(
+      <TransactionList
+        transactions={[
+          txForDay(0, { id: 't1', category: 'Сегодня' }),
+          txForDay(1, { id: 't2', category: 'Вчера' }),
+          txForFuture(5, { id: 't3', category: 'Завтра' }),
+        ]}
+        accounts={[]}
+        envelopes={[]}
+        range={'past'}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Сегодня')).toBeInTheDocument()
+    expect(screen.getByText('Вчера')).toBeInTheDocument()
+    expect(screen.queryByText('Завтра')).not.toBeInTheDocument()
+  })
+
+  it('«future» показывает только будущие', () => {
+    render(
+      <TransactionList
+        transactions={[
+          txForDay(0, { id: 't1', category: 'Сегодня' }),
+          txForDay(1, { id: 't2', category: 'Вчера' }),
+          txForFuture(5, { id: 't3', category: 'Завтра' }),
+        ]}
+        accounts={[]}
+        envelopes={[]}
+        range={'future'}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Завтра')).toBeInTheDocument()
+    expect(screen.queryByText('Вчера')).not.toBeInTheDocument()
+  })
+
+  it('future с пустым списком — сообщение о будущих', () => {
+    render(
+      <TransactionList
+        transactions={[txForDay(1, { id: 't2', category: 'Вчера' })]}
+        accounts={[]}
+        envelopes={[]}
+        range={'future'}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Будущих транзакций пока нет')).toBeInTheDocument()
+  })
+
+  it('сегодняшний блок выделяется цветом', () => {
+    render(
+      <TransactionList
+        transactions={[txForDay(0, { id: 't1', category: 'Сегодня' }), txForDay(1, { id: 't2', category: 'Вчера' })]}
+        accounts={[]}
+        envelopes={[]}
+        range={'past'}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    )
+
+    const headers = screen.getAllByRole('button')
+    const todayHeader = headers.find((h) => h.textContent?.includes('сегодня'))!
+    expect(todayHeader.className).toContain('bg-yellow/10')
+  })
+})
+
+describe('TransactionList: сортировка будущего', () => {
+  it('«future» сортируется по возрастанию (ближайшее сверху), сегодня закреплён первым', () => {
+    render(
+      <TransactionList
+        transactions={[
+          txForFuture(10, { id: 't-far', category: 'Далёкое' }),
+          txForFuture(2, { id: 't-near', category: 'Ближнее' }),
+          txForDay(0, { id: 't-today', category: 'Сегодня' }),
+        ]}
+        accounts={[]}
+        envelopes={[]}
+        range={'future'}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    )
+
+    const headers = screen.getAllByRole('button').map((b) => b.textContent ?? '').filter((s) => s.includes('📅') || s.includes('☀️'))
+    expect(headers[0]).toContain('сегодня')
+    expect(headers[1]).toContain('13 сентября')
+    expect(headers[2]).toContain('21 сентября')
   })
 })

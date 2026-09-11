@@ -100,7 +100,7 @@ describe('TransactionsPage', () => {
     renderPage()
 
     await user.click(screen.getByTitle('Удалить'))
-    expect(STORE_ACTIONS.deleteTransaction).toHaveBeenCalledWith('tx-test-id')
+    expect(STORE_ACTIONS.deleteTransaction).toHaveBeenCalledWith('tx-test-id', 'one')
     vi.restoreAllMocks()
   })
 

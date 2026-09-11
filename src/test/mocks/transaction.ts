@@ -4,6 +4,7 @@ export function createMockTransaction(overrides?: Partial<Transaction>): Transac
   return {
     id: 'tx-test-id',
     type: 'expense',
+    mode: 'fact',
     date: 0,
     amount: 1000,
     category: 'Продукты',

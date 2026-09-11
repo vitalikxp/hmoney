@@ -135,3 +135,53 @@ describe('TransactionModal', () => {
     expect(screen.getByText('Сохранить')).toBeInTheDocument()
   })
 })
+
+describe('TransactionModal: план не в прошлом', () => {
+  it('запрещает плановую транзакцию с прошедшей датой', async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn().mockResolvedValue(undefined)
+    render(
+      <TransactionModal
+        transaction={null}
+        accounts={ACCOUNTS}
+        envelopes={ENVELOPES}
+        onSubmit={onSubmit}
+        onClose={vi.fn()}
+      />,
+    )
+
+    await user.type(screen.getByLabelText('Сумма и описание *'), '500 молоко')
+    await user.type(screen.getByLabelText('Категория *'), 'Продукты')
+    // вчера
+    const y = new Date()
+    y.setDate(y.getDate() - 1)
+    const iso = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}-${String(y.getDate()).padStart(2, '0')}`
+    await user.clear(screen.getByLabelText('Дата *'))
+    await user.type(screen.getByLabelText('Дата *'), iso)
+    await user.click(screen.getByText('План'))
+
+    expect(screen.getByText('Плановая транзакция не создаётся в прошлом')).toBeInTheDocument()
+    expect(screen.getByText('Создать')).toBeDisabled()
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it('разрешает план с сегодняшней датой', async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn().mockResolvedValue(undefined)
+    render(
+      <TransactionModal
+        transaction={null}
+        accounts={ACCOUNTS}
+        envelopes={ENVELOPES}
+        onSubmit={onSubmit}
+        onClose={vi.fn()}
+      />,
+    )
+
+    await user.type(screen.getByLabelText('Сумма и описание *'), '500 молоко')
+    await user.type(screen.getByLabelText('Категория *'), 'Продукты')
+    await user.click(screen.getByText('План'))
+
+    expect(screen.queryByText('Плановая транзакция не создаётся в прошлом')).not.toBeInTheDocument()
+  })
+})

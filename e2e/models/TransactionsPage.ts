@@ -31,7 +31,40 @@ export class TransactionModalPOM {
     return this.page.getByRole('button', { name: /^(создать|сохранить)$/i })
   }
 
+  get transferTab(): Locator {
+    return this.page.getByRole('button', { name: 'Перевод' })
+  }
+
+  get accountsKindTab(): Locator {
+    return this.page.getByRole('button', { name: 'Между счетами' })
+  }
+
+  get envelopesKindTab(): Locator {
+    return this.page.getByRole('button', { name: 'Между конвертами' })
+  }
+
+  get transferFromSelect(): Locator {
+    return this.page.locator('#transfer-from')
+  }
+
+  get transferToSelect(): Locator {
+    return this.page.locator('#transfer-to')
+  }
+
+  get repeatCheckbox(): Locator {
+    return this.page.locator('#repeat-enabled')
+  }
+
+  get repeatPresetSelect(): Locator {
+    return this.page.locator('#repeat-preset')
+  }
+
+  get scopeFutureButton(): Locator {
+    return this.page.getByRole('button', { name: 'Эту и будущие' })
+  }
+
   async fill(text: string) {
+    await this.inputText.waitFor({ state: 'visible' })
     await this.inputText.fill(text)
   }
 
@@ -41,6 +74,31 @@ export class TransactionModalPOM {
 
   async selectEnvelope(label: string) {
     await this.envelopeSelect.selectOption({ label })
+  }
+
+  async selectType(label: 'Расход' | 'Доход' | 'Перевод') {
+    await this.page.getByRole('button', { name: label, exact: true }).click()
+  }
+
+  async selectTransferKind(kind: 'accounts' | 'envelopes') {
+    await (kind === 'accounts' ? this.accountsKindTab : this.envelopesKindTab).click()
+  }
+
+  async selectTransferFrom(label: string) {
+    await this.transferFromSelect.selectOption({ label })
+  }
+
+  async selectTransferTo(label: string) {
+    await this.transferToSelect.selectOption({ label })
+  }
+
+  async enableRepeat(preset: string) {
+    await this.repeatCheckbox.check()
+    await this.repeatPresetSelect.selectOption({ label: preset })
+  }
+
+  async chooseScopeFuture() {
+    await this.scopeFutureButton.click()
   }
 
   async submit() {
@@ -73,6 +131,14 @@ export class TransactionsPage {
     return this.page.getByRole('button', { name: 'Создать первую транзакцию' })
   }
 
+  get categoriesButton(): Locator {
+    return this.page.getByRole('button', { name: 'Категории' })
+  }
+
+  get categoriesHeading(): Locator {
+    return this.page.getByRole('heading', { name: 'Категории' })
+  }
+
   async goto() {
     await this.page.goto('/transactions')
     await expect(this.heading).toBeVisible()
@@ -102,7 +168,10 @@ export class TransactionsPage {
     await row.getByTitle('Удалить').click()
   }
 
+  // case-sensitive точный матч категории (getByText со string — case-insensitive,
+  // что ловит совпадающее описание «кофе» рядом)
   private cardRow(category: string) {
-    return this.page.getByText(category, { exact: true }).locator('..').locator('..')
+    const escaped = category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    return this.page.getByText(new RegExp(`^${escaped}$`)).locator('..').locator('..').locator('..')
   }
 }
