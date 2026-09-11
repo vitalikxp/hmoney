@@ -2,20 +2,16 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { BackendError } from '../lib/backend'
 
-const { mockLogin, mockUseAuthStore, mockFirebaseError } = vi.hoisted(() => ({
+const { mockLogin, mockUseAuthStore } = vi.hoisted(() => ({
   mockLogin: vi.fn(),
   mockUseAuthStore: vi.fn(),
-  mockFirebaseError: class extends Error {
-    code = ''
-  },
 }))
 
 vi.mock('../stores/authStore', () => ({
   useAuthStore: mockUseAuthStore,
 }))
-
-vi.mock('firebase/app', () => ({ FirebaseError: mockFirebaseError }))
 
 function renderPage() {
   return render(
@@ -66,12 +62,11 @@ describe('LoginPage', () => {
 
   it('shows error on failed login', async () => {
     const user = userEvent.setup()
-    const fbErr = new mockFirebaseError('wrong')
-    fbErr.code = 'auth/invalid-credential'
+    const loginErr = new BackendError('invalid-credential', 'Неверный email или пароль')
     mockUseAuthStore.mockReturnValue({
       user: null,
       loading: false,
-      login: mockLogin.mockRejectedValue(fbErr),
+      login: mockLogin.mockRejectedValue(loginErr),
     })
     renderPage()
 

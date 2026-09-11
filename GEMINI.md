@@ -25,17 +25,21 @@
 - **Frontend:** React 19 (SPA) + TypeScript + Vite.
 - **Стилизация:** Tailwind CSS v4 (используя `@tailwindcss/vite`).
 - **Управление состоянием:** Zustand (`src/stores/`).
-- **Backend:** Firebase Auth & Firestore (`src/lib/firebase.ts`).
+- **Backend-абстракция:** `src/lib/backend/` — интерфейсы `Backend`/`AuthProvider`/`Repository` + два адаптера:
+  - `firestore/` — Firebase Auth & Firestore (production; ленивая инициализация, конвертация `Timestamp ↔ number` на границе);
+  - `local/` — `localStorage`-данные + фейковая auth (dev-режим без Firebase).
+  - Выбор драйвера: `VITE_STORAGE_DRIVER` (`local` по умолчанию в dev через `.env.development`, `firestore` в production-сборке).
+- **Драйверы сервисов:** `accountService`/`envelopeService` — тонкие фассады над `backend`.
 - **Роутинг:** React Router v7.
 - **Дизайн-система:** Высококонтрастный стиль "ClickHouse" (Желтый #faff69 на Черном #0a0a0a). См. `DESIGN.md`.
-- **Сервисы:** Логика взаимодействия с Firebase находится в `src/lib/*Service.ts`.
+- **Сервисы:** Логика взаимодействия с Firebase находится в `src/lib/*Service.ts`; доменные типы не зависят от vendor.
 
 ## Рабочие процессы разработки
 
 ### Сборка и запуск
 - **Установка:** `pnpm install`
-- **Разработка:** `pnpm run dev`
-- **Сборка:** `pnpm run build` (включает проверку TypeScript и продакшн-сборку).
+- **Разработка:** `pnpm run dev` (local-драйвер по умолчанию; с Firestore: `VITE_STORAGE_DRIVER=firestore pnpm run dev`)
+- **Сборка:** `pnpm run build` (включает проверку TypeScript и продакшн-сборку; Firestore-драйвер).
 - **Предпросмотр:** `pnpm run preview`
 
 ### Тестирование (ОБЯЗАТЕЛЬНО)
@@ -52,7 +56,9 @@
   - Имена тестов на русском языке.
 
 #### E2E тестирование (Playwright)
-- **Команда:** `pnpm run test:e2e:full` (запуск тестов + очистка).
+- **Команда:** `pnpm run test:e2e` (local-проект на localStorage + production против money.vitalik.dev).
+- **На реальном Firestore:** `pnpm run test:e2e:firebase` (нужны `.env` и правила; перед прогоном остановить dev-сервер — иначе playwright подхватит уже запущенный сервер с другим драйвером).
+- **Прогон + очистка:** `pnpm run test:e2e:full`.
 - **Расположение:** `e2e/*.spec.ts`.
 - **Конвенции:**
   - Обязательно для новых страниц или критических сценариев (Login, CRUD).

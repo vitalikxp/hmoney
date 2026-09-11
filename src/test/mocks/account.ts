@@ -9,8 +9,8 @@ export function createMockAccount(overrides?: Partial<Account>): Account {
     includeInBalance: true,
     currency: 'RUB',
     sortOrder: 0,
-    createdAt: { seconds: 0, nanoseconds: 0 } as Account['createdAt'],
-    updatedAt: { seconds: 0, nanoseconds: 0 } as Account['updatedAt'],
+    createdAt: 0,
+    updatedAt: 0,
     ...overrides,
   }
 }

@@ -37,9 +37,10 @@ hmoney — SPA на React, развёрнутое на GitHub Pages.
 8. **Баланс в целых рублях** — без копеек, шаг 1
 9. **Категории — строка, не справочник** — свободное текстовое поле на транзакции
 10. **Модальные формы** — все CRUD-формы (счёт, транзакция) через модалы, не инлайн-панели
-11. **Тестирование: Vitest + Testing Library** — без ESLint/Biome, только `tsc -b` + `npm test`; моки на уровне модулей (Firebase), stores/Zustand через `vi.hoisted()`
-12. **E2E: Playwright** — два проекта (local + production); Page Object Model; очистка тестовых пользователей через Firebase Admin SDK
+11. **Тестирование: Vitest + Testing Library** — без ESLint/Biome, только `tsc -b` + `pnpm test`; моки на уровне модулей (Firebase/backend), stores/Zustand через `vi.hoisted()`
+12. **E2E: Playwright** — два проекта (local на localStorage-драйвере + production); Page Object Model; очистка тестовых пользователей через Firebase Admin SDK
 13. **Двухуровневая модель конвертов** — ХаниМани вычисляется (Σ счетов − Σ остальных конвертов), Резервы хранятся как единственный системный конверт (`isBuiltIn`), плюс до 20 пользовательских (fund/goal). Лимит проверяется в store перед созданием
+14. **Backend-абстракция (anti vendor-lock)** — `src/lib/backend/` с интерфейсами `Backend`/`AuthProvider`/`Repository`; адаптеры `firestore` (production) и `local` (dev, localStorage); драйвер по `VITE_STORAGE_DRIVER`; доменные типы нейтральны (`Timestamp` → `number`)
 
 ## Разделы
 - [Обоснование стека](./Стек.md)

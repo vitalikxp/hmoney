@@ -16,15 +16,15 @@ export class EnvelopeModal {
   }
 
   get balanceInput(): Locator {
-    return this.form.getByRole('spinbutton').first()
+    return this.form.locator('#envelope-balance')
   }
 
   get isGoalCheckbox(): Locator {
-    return this.form.getByRole('checkbox', { name: /это цель/i })
+    return this.form.getByLabel(/это цель/i)
   }
 
   get targetInput(): Locator {
-    return this.form.getByRole('spinbutton').nth(1)
+    return this.form.locator('#target')
   }
 
   get submitButton(): Locator {

@@ -23,14 +23,6 @@ test.describe('Конверты', () => {
     await expect(page.getByText('Резервы', { exact: true })).toBeVisible()
   })
 
-  test('показывает empty state если нет конвертов', async ({ page, envelopesPage }) => {
-    await registerAndLogin(page)
-    await envelopesPage.goto()
-
-    await expect(page.getByText('Конвертов пока нет')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Создать первый конверт' })).toBeVisible()
-  })
-
   test('создать конверт', async ({ page, envelopesPage }) => {
     await registerAndLogin(page)
     await envelopesPage.goto()

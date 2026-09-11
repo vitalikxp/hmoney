@@ -1,5 +1,3 @@
-import type { Timestamp } from 'firebase/firestore'
-
 export interface Account {
   id: string
   name: string
@@ -9,8 +7,8 @@ export interface Account {
   includeInBalance: boolean
   currency: string
   sortOrder: number
-  createdAt: Timestamp
-  updatedAt: Timestamp
+  createdAt: number
+  updatedAt: number
 }
 
 export type CreateAccountInput = Omit<Account, 'id' | 'createdAt' | 'updatedAt'>

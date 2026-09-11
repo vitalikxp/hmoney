@@ -6,6 +6,22 @@ status: updated
 
 # Журнал изменений
 
+## [2026-09-11] архитектура | Backend-абстракция: удаление vendor-lock на Firestore
+
+- `src/lib/backend/`: нейтральные интерфейсы (`Backend`, `AuthProvider`, `Repository`, `BackendError`, `User`) + фабрика драйвера по `VITE_STORAGE_DRIVER`
+- `firestore/` адаптер: код из прежних `accountService`/`envelopeService` и auth-логики `authStore`; Firebase инициализируется лениво (`getFirebase()`) — только при реальных операциях
+- `local/` адаптер: данные в `localStorage` (`hmoney:users`, `hmoney:session`, `hmoney:data:{uid}:accounts|envelopes`), фейковая auth с сессией; пароль открытым текстом — dev only
+- `types/account.ts`, `types/envelope.ts`: `Timestamp` (firebase) → `number` (epoch ms); конвертация на границе firestore-адаптера
+- `accountService`/`envelopeService` — тонкие фассады над `backend` (API прежний → stores не тронуты)
+- `authStore` — на `backend.auth` + `createProfile`; `logout` теперь сам сбрасывает user в state (fix: с local-адаптером logout не выходил, т.к. не было onAuthStateChanged)
+- Страницы Login/Register: `FirebaseError` → `BackendError` (нейтральные коды `invalid-credential`, `email-already-in-use`, `weak-password`, `invalid-email`)
+- **Dev-режим по умолчанию на local-драйвере**: `.env.development` (в git) задаёт `VITE_STORAGE_DRIVER=local`; production-сборка — `firestore`; override: `VITE_STORAGE_DRIVER=firestore pnpm run dev`
+- Скрипт `test:e2e:firebase` — local-проект e2e на реальном Firestore (env наследуется webServer-процессом)
+- Тесты: +14 для local-адаптера (auth/CRUD/rollback/deleteUser); `authStore.test` переписан на мок `backend`; моки Timestamp → number. Итого **151 unit** (18 файлов)
+- E2E-фиксы устаревшего: EnvelopeModal POM — локаторы `spinbutton` → `#envelope-balance`/`#target` (сломано ещё MoneyInput-рефакторингом в мае); удалён e2e «empty state конвертов» — состояние недостижимо (built-in «Резервы» неудаляем, текст в тесте тоже устарел). Итого **18 local + 5 production = 23**, все зелёные
+- Wiki: `Стек.md` (раздел Backend-абстракция), `Данные.md` (нейтральные типы), `Архитектура/index.md` (решение 14), README/GEMINI/AGENTS обновлены
+- Следствие: дев-разработка и local e2e работают без `.env`, сети и Firebase; правила Firestore влияют только на production-проект и `test:e2e:firebase`
+
 ## [2026-09-11] инфраструктура | Миграция на pnpm + обновление всех зависимостей до latest
 
 - `package.json`: добавлен `packageManager: pnpm@11.13.1` (corepack), скрипт `test:e2e:full` переведён на pnpm (семантика `;` сохранена — cleanup идёт даже при падении тестов)

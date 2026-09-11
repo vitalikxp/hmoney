@@ -41,10 +41,10 @@ status: updated
 
 ## Тестирование
 - **Фреймворк:** Vitest + Testing Library
-- **Тестов:** 137 (17 файлов)
+- **Тестов:** 151 (18 файлов)
 - **Запуск:** `pnpm test` / `pnpm run test:watch`
 - **CI:** `pnpm test` перед билдом
-- **E2E:** Playwright, 19 local + 5 production, очистка через Admin SDK (`pnpm run test:e2e:cleanup`)
+- **E2E:** Playwright, 18 local (local-драйвер) + 5 production; на Firestore — `pnpm run test:e2e:firebase`; очистка через Admin SDK (`pnpm run test:e2e:cleanup`)
 - **Инструкции для агентов:** [AGENTS.md](../AGENTS.md#unit-тестирование) / [E2E](../AGENTS.md#e2e-тестирование-playwright)
 
 ## Журнал изменений
@@ -58,6 +58,6 @@ status: updated
 ---
 
 **Всего страниц:** 27
-**Unit-тестов:** 137
-**E2E-тестов:** 19 local + 5 production
-**Последнее обновление:** 2026-09-11 (43-е обновление)
+**Unit-тестов:** 151
+**E2E-тестов:** 18 local + 5 production
+**Последнее обновление:** 2026-09-11 (44-е обновление)

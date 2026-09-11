@@ -2,20 +2,16 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { BackendError } from '../lib/backend'
 
-const { mockRegister, mockUseAuthStore, mockFirebaseError } = vi.hoisted(() => ({
+const { mockRegister, mockUseAuthStore } = vi.hoisted(() => ({
   mockRegister: vi.fn(),
   mockUseAuthStore: vi.fn(),
-  mockFirebaseError: class extends Error {
-    code = ''
-  },
 }))
 
 vi.mock('../stores/authStore', () => ({
   useAuthStore: mockUseAuthStore,
 }))
-
-vi.mock('firebase/app', () => ({ FirebaseError: mockFirebaseError }))
 
 function renderPage() {
   return render(
@@ -96,12 +92,11 @@ describe('RegisterPage', () => {
 
   it('shows error on duplicate email', async () => {
     const user = userEvent.setup()
-    const fbErr = new mockFirebaseError('exists')
-    fbErr.code = 'auth/email-already-in-use'
+    const regErr = new BackendError('email-already-in-use', 'Этот email уже зарегистрирован')
     mockUseAuthStore.mockReturnValue({
       user: null,
       loading: false,
-      register: mockRegister.mockRejectedValue(fbErr),
+      register: mockRegister.mockRejectedValue(regErr),
     })
     renderPage()
 

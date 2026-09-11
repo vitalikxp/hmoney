@@ -1,36 +1,28 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-vi.mock('../lib/firebase', () => ({ auth: {}, db: {} }))
-
-const { mockOnAuthStateChanged } = vi.hoisted(() => ({
-  mockOnAuthStateChanged: vi.fn((_auth: unknown, cb: (u: unknown) => void) => {
-    cb(null)
-    return () => {}
-  }),
+const { mockAuth, mockCreateProfile, mockEnsureBuiltInEnvelopes } = vi.hoisted(() => ({
+  mockAuth: {
+    subscribe: vi.fn(),
+    login: vi.fn(),
+    register: vi.fn(),
+    logout: vi.fn(),
+    deleteUser: vi.fn(),
+  },
+  mockCreateProfile: vi.fn(),
+  mockEnsureBuiltInEnvelopes: vi.fn(),
 }))
 
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-  onAuthStateChanged: mockOnAuthStateChanged,
-  signInWithEmailAndPassword: vi.fn(),
-  createUserWithEmailAndPassword: vi.fn(),
-  signOut: vi.fn(),
-  deleteUser: vi.fn(),
-}))
-
-vi.mock('firebase/firestore', () => ({
-  getFirestore: vi.fn(() => ({})),
-  doc: vi.fn(() => ({ id: 'test-doc' })),
-  setDoc: vi.fn(),
-  serverTimestamp: vi.fn(() => null),
+vi.mock('../lib/backend', () => ({
+  backend: {
+    auth: mockAuth,
+    createProfile: mockCreateProfile,
+  },
 }))
 
 vi.mock('../lib/envelopeService', () => ({
-  ensureBuiltInEnvelopes: vi.fn(),
+  ensureBuiltInEnvelopes: mockEnsureBuiltInEnvelopes,
 }))
 
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, deleteUser } from 'firebase/auth'
-import { setDoc } from 'firebase/firestore'
 import { useAuthStore } from '../stores/authStore'
 
 describe('authStore', () => {
@@ -46,46 +38,46 @@ describe('authStore', () => {
   })
 
   describe('login', () => {
-    it('calls signInWithEmailAndPassword and sets user', async () => {
+    it('calls backend login and sets user', async () => {
       const mockUser = { uid: 'u1', email: 'test@test.com' }
-      vi.mocked(signInWithEmailAndPassword).mockResolvedValueOnce({ user: mockUser } as never)
+      mockAuth.login.mockResolvedValueOnce(mockUser)
 
       await useAuthStore.getState().login('test@test.com', 'pass')
 
-      expect(signInWithEmailAndPassword).toHaveBeenCalledWith(expect.anything(), 'test@test.com', 'pass')
+      expect(mockAuth.login).toHaveBeenCalledWith('test@test.com', 'pass')
       expect(useAuthStore.getState().user).toEqual(mockUser)
     })
   })
 
   describe('register', () => {
-    it('calls createUserWithEmailAndPassword and creates Firestore doc', async () => {
+    it('registers, creates profile and built-in envelopes', async () => {
       const mockUser = { uid: 'u2', email: 'new@test.com' }
-      vi.mocked(createUserWithEmailAndPassword).mockResolvedValueOnce({ user: mockUser } as never)
+      mockAuth.register.mockResolvedValueOnce(mockUser)
 
       await useAuthStore.getState().register('new@test.com', 'pass123')
 
-      expect(createUserWithEmailAndPassword).toHaveBeenCalledWith(expect.anything(), 'new@test.com', 'pass123')
-      expect(setDoc).toHaveBeenCalledOnce()
+      expect(mockAuth.register).toHaveBeenCalledWith('new@test.com', 'pass123')
+      expect(mockCreateProfile).toHaveBeenCalledWith('u2', 'new@test.com')
+      expect(mockEnsureBuiltInEnvelopes).toHaveBeenCalledWith('u2')
       expect(useAuthStore.getState().user).toEqual(mockUser)
     })
 
-    it('rolls back auth user when Firestore doc creation fails', async () => {
+    it('rolls back auth user when profile creation fails', async () => {
       const mockUser = { uid: 'u3', email: 'fail@test.com' }
-      vi.mocked(createUserWithEmailAndPassword).mockResolvedValueOnce({ user: mockUser } as never)
-      vi.mocked(setDoc).mockRejectedValueOnce(new Error('Firestore error') as never)
+      mockAuth.register.mockResolvedValueOnce(mockUser)
+      mockCreateProfile.mockRejectedValueOnce(new Error('backend error'))
 
       await expect(useAuthStore.getState().register('fail@test.com', 'pass')).rejects.toThrow('Ошибка создания профиля')
 
-      expect(deleteUser).toHaveBeenCalledWith(mockUser)
+      expect(mockAuth.deleteUser).toHaveBeenCalledWith('u3')
       expect(useAuthStore.getState().user).toBeNull()
     })
   })
 
   describe('logout', () => {
-    it('calls signOut', async () => {
-      useAuthStore.setState({ user: { uid: 'u1' } as never })
+    it('calls backend logout', async () => {
       await useAuthStore.getState().logout()
-      expect(signOut).toHaveBeenCalledOnce()
+      expect(mockAuth.logout).toHaveBeenCalledOnce()
     })
   })
 })

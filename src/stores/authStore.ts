@@ -1,14 +1,5 @@
 import { create } from 'zustand'
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  deleteUser,
-  type User,
-} from 'firebase/auth'
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
-import { auth, db } from '../lib/firebase'
+import { backend, type User } from '../lib/backend'
 import * as envelopeService from '../lib/envelopeService'
 
 interface AuthState {
@@ -23,30 +14,27 @@ export const useAuthStore = create<AuthState>(() => ({
   user: null,
   loading: true,
   login: async (email, password) => {
-    const cred = await signInWithEmailAndPassword(auth, email, password)
-    useAuthStore.setState({ user: cred.user })
+    const user = await backend.auth.login(email, password)
+    useAuthStore.setState({ user })
   },
   register: async (email, password) => {
-    const cred = await createUserWithEmailAndPassword(auth, email, password)
-    useAuthStore.setState({ user: cred.user })
+    const user = await backend.auth.register(email, password)
+    useAuthStore.setState({ user })
     try {
-      await setDoc(doc(db, 'users', cred.user.uid), {
-        email,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      })
-      await envelopeService.ensureBuiltInEnvelopes(cred.user.uid)
+      await backend.createProfile(user.uid, email)
+      await envelopeService.ensureBuiltInEnvelopes(user.uid)
     } catch {
       useAuthStore.setState({ user: null })
-      try { await deleteUser(cred.user) } catch (e) { console.error('Failed to delete orphaned auth user', e) }
+      try { await backend.auth.deleteUser(user.uid) } catch (e) { console.error('Failed to delete orphaned auth user', e) }
       throw new Error('Ошибка создания профиля')
     }
   },
   logout: async () => {
-    await signOut(auth)
+    await backend.auth.logout()
+    useAuthStore.setState({ user: null })
   },
 }))
 
-onAuthStateChanged(auth, (user) => {
+backend.auth.subscribe((user) => {
   useAuthStore.setState({ user, loading: false })
 })

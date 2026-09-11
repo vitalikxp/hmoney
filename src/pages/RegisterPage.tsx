@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { FirebaseError } from 'firebase/app'
+import { BackendError } from '../lib/backend'
 import { useAuthStore } from '../stores/authStore'
 
 export default function RegisterPage() {
@@ -51,15 +51,15 @@ export default function RegisterPage() {
       await register(email, password)
       navigate('/', { replace: true })
     } catch (err: unknown) {
-      if (err instanceof FirebaseError) {
+      if (err instanceof BackendError) {
         switch (err.code) {
-          case 'auth/email-already-in-use':
+          case 'email-already-in-use':
             setError('Этот email уже зарегистрирован')
             break
-          case 'auth/weak-password':
+          case 'weak-password':
             setError('Слишком простой пароль')
             break
-          case 'auth/invalid-email':
+          case 'invalid-email':
             setError('Некорректный email')
             break
           default:

@@ -1,25 +1,8 @@
-import {
-  collection,
-  doc,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  serverTimestamp,
-  query,
-  orderBy,
-} from 'firebase/firestore'
-import { db } from './firebase'
+import { backend } from './backend'
 import type { Envelope, CreateEnvelopeInput, UpdateEnvelopeInput } from '../types/envelope'
 
-function envelopesRef(userId: string) {
-  return collection(db, 'users', userId, 'envelopes')
-}
-
 export async function fetchEnvelopes(userId: string): Promise<Envelope[]> {
-  const q = query(envelopesRef(userId), orderBy('createdAt'))
-  const snapshot = await getDocs(q)
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Envelope))
+  return backend.envelopes.fetch(userId)
 }
 
 const BUILT_IN_ENVELOPES: Array<{ name: string; icon: string; sortOrder: number }> = [
@@ -45,21 +28,13 @@ export async function ensureBuiltInEnvelopes(userId: string): Promise<void> {
 }
 
 export async function createEnvelope(userId: string, data: CreateEnvelopeInput): Promise<string> {
-  const ref = await addDoc(envelopesRef(userId), {
-    ...data,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  })
-  return ref.id
+  return backend.envelopes.create(userId, data)
 }
 
-export async function updateEnvelope(userId: string, envelopeId: string, data: UpdateEnvelopeInput) {
-  await updateDoc(doc(envelopesRef(userId), envelopeId), {
-    ...data,
-    updatedAt: serverTimestamp(),
-  })
+export async function updateEnvelope(userId: string, envelopeId: string, data: UpdateEnvelopeInput): Promise<void> {
+  await backend.envelopes.update(userId, envelopeId, data)
 }
 
-export async function deleteEnvelope(userId: string, envelopeId: string) {
-  await deleteDoc(doc(envelopesRef(userId), envelopeId))
+export async function deleteEnvelope(userId: string, envelopeId: string): Promise<void> {
+  await backend.envelopes.delete(userId, envelopeId)
 }

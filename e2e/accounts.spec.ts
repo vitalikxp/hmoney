@@ -65,7 +65,7 @@ test.describe('Счета', () => {
     await accountsPage.createAccount(name, { balance: -5000 })
 
     await expect(page.getByText(name, { exact: true })).toBeVisible()
-    await expect(page.getByText('-5 000₽')).toBeVisible()
+    await expect(page.getByText('-5 000₽')).toHaveCount(2)
   })
 
   test('редактировать счёт', async ({ page, accountsPage }) => {

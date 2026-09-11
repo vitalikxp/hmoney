@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { FirebaseError } from 'firebase/app'
+import { BackendError } from '../lib/backend'
 import { useAuthStore } from '../stores/authStore'
 
 export default function LoginPage() {
@@ -39,12 +39,12 @@ export default function LoginPage() {
       await login(email, password)
       navigate('/', { replace: true })
     } catch (err: unknown) {
-      if (err instanceof FirebaseError) {
+      if (err instanceof BackendError) {
         switch (err.code) {
-          case 'auth/invalid-credential':
+          case 'invalid-credential':
             setError('Неверный email или пароль')
             break
-          case 'auth/invalid-email':
+          case 'invalid-email':
             setError('Некорректный email')
             break
           default:

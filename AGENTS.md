@@ -238,12 +238,13 @@ render(<AccountCard account={createMockAccount({ name: 'Наличные' })} on
 
 | Команда | Описание |
 |---------|----------|
-| `pnpm run test:e2e` | Все тесты на localhost (автозапуск `pnpm run dev` через `webServer`) |
+| `pnpm run test:e2e` | Local-проект на **local-драйвере** (localStorage, dev-сервер через webServer) + production-проект против https://money.vitalik.dev |
+| `pnpm run test:e2e:firebase` | Local-проект на **реальном Firestore** (`VITE_STORAGE_DRIVER=firestore`); нужны `.env` и рабочие правила; перед прогоном остановить запущенный dev-сервер (`reuseExistingServer` подхватит его как есть) |
 | `pnpm run test:e2e:prod` | Все тесты против https://money.vitalik.dev |
 | `pnpm run test:e2e:ui` | UI Mode (watch, time travel) |
 | `pnpm run test:e2e:headed` | С видимым браузером (для отладки) |
 | `pnpm run test:e2e:cleanup` | Удалить тестовых пользователей из Auth + Firestore |
-| `pnpm run test:e2e:full` | Прогнать тесты на localhost, затем очистить пользователей |
+| `pnpm run test:e2e:full` | Прогнать тесты, затем очистить пользователей |
 
 ### Структура
 
@@ -302,6 +303,7 @@ export const test = base.extend<MyFixtures>({
 - **Пароль:** `Pa$$w0rd`
 - Используй один и тот же аккаунт для большинства тестов — так не плодятся пользователи в Firestore
 - Если тест проверяет регистрацию, используй динамический email: `test-${Date.now()}@vitalik.dev`
+- На **local-драйвере** (дефолтный `test:e2e`) пользователи создаются только в localStorage браузерного контекста — Firebase не затрагивается, cleanup не нужен. Реальный Firebase используется только в production-проекте и в `test:e2e:firebase`.
 
 ### Особенности Firebase Auth
 

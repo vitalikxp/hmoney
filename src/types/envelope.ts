@@ -1,5 +1,3 @@
-import type { Timestamp } from 'firebase/firestore'
-
 export interface Envelope {
   id: string
   name: string
@@ -9,8 +7,8 @@ export interface Envelope {
   icon?: string
   isBuiltIn?: boolean
   sortOrder: number
-  createdAt: Timestamp
-  updatedAt: Timestamp
+  createdAt: number
+  updatedAt: number
 }
 
 export type CreateEnvelopeInput = Omit<Envelope, 'id' | 'createdAt' | 'updatedAt'>
