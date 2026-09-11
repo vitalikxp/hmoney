@@ -6,6 +6,28 @@ status: updated
 
 # Журнал изменений
 
+## [2026-09-11] инфраструктура | Миграция на pnpm + обновление всех зависимостей до latest
+
+- `package.json`: добавлен `packageManager: pnpm@11.13.1` (corepack), скрипт `test:e2e:full` переведён на pnpm (семантика `;` сохранена — cleanup идёт даже при падении тестов)
+- `package-lock.json` удалён → `pnpm-lock.yaml`; `pnpm-workspace.yaml` создан (allowBuilds: esbuild, protobufjs, @firebase/util — иначе pnpm 11 блокирует их postinstall)
+- Обновления minor/patch: react/react-dom 19.3.0, firebase 12.19.0, vite 8.3.0, @vitejs/plugin-react 6.1.1, @playwright/test 1.63.0, tailwindcss/@tailwindcss/vite 4.3.3, react-router-dom 7.18.3, zustand 5.0.15, @types/react(-dom) 19.3.0, fontsource 5.3.0, tsx 4.23.13
+- Обновления major: typescript 6.0.3 → **7.0.2** (нативный компилятор, `tsc -b` прошёл без правок), vitest 4 → **5.0.0** (137/137 без правок), @testing-library/jest-dom 6 → **7.0.1**, jsdom 29 → **30.0.1**, firebase-admin 13 → **14.4.0**
+- `deploy.yml`: `pnpm/action-setup@v4` + `cache: pnpm` + `pnpm install --frozen-lockfile`, `npm test/build` → pnpm, node 20 → 24 (совпадает с локальной средой)
+- `playwright.config.ts`: `npm run dev` → `pnpm run dev`; **webServer перенесён на верхний уровень конфига** — в Playwright 1.61+ пер-проектный webServer больше не поддерживается и молча игнорируется (19 local-тестов падали с ERR_CONNECTION_REFUSED); URL localhost → 127.0.0.1
+- `vite.config.ts`: `server.host: '127.0.0.1'` — на Node 24 vite 8 привязывается только к IPv6 `[::1]`, из-за чего Chromium (127.0.0.1) получал connection refused
+- README.md, GEMINI.md, AGENTS.md: все команды npm → pnpm (заодно исправлены старые опечатки `ppnpm`)
+- Верификация: `pnpm test` 137/137 ✅, `pnpm run build` (TS 7 + vite 8.3) ✅, локальный E2E — 13/24 ✅ (см. проблему правил ниже)
+
+## [2026-09-11] аудит | Проблема: правила Firestore запрещают записи даже в продакшене
+
+- Симптом: все CRUD E2E (счета/конверты) падают с «Ошибка создания счёта»; консоль браузера — `FirebaseError: Missing or insufficient permissions` из accountStore
+- Воспроизводится на трёх транспортах: localhost (webServer), продакшен https://money.vitalik.dev (headless Chrome), чистый Firestore REST v1 с валидным idToken
+- Разрешено при этом: создание `users/{uid}` при регистрации и создание built-in конвертов; запрещено: чтение `users/{uid}/accounts` (список «Загрузка…» навсегда) и запись `accounts`/**`envelopes` для всех транспортов кроме channel-запросов SDK
+- Приложение не менялось с мая — это серверная конфигурация (Firebase Console → Firestore → Rules), НЕ следствие миграции на pnpm
+- Unit-тесты это не ловят (Firebase мокается), E2E — единственная защита от такого регресса
+- TODO: проверить правила в консоли Firebase; после исправления прогнать `pnpm run test:e2e:full`
+- Тестовые пользователи (`test-*@vitalik.dev`) остались в Auth — удалить через `pnpm run test:e2e:cleanup` (нужен сервисный аккаунт)
+
 ## [2026-05-17] аудит | wiki: BudgetSummaryWidget, E2E-счётчик, ФТ EN-01/EN-02
 
 - `Компоненты.md`: «Накопления» → «Конверты» в описании BudgetSummaryWidget

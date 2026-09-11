@@ -118,7 +118,7 @@ wiki/
 
 ### Обязательное правило
 
-Перед сдачей любой задачи (написание кода, рефакторинг, исправление бага) агент **обязан** запустить `npm test`.
+Перед сдачей любой задачи (написание кода, рефакторинг, исправление бага) агент **обязан** запустить `pnpm test`.
 Если какие-то тесты упали — сначала починить их, только потом сообщать о завершении.
 
 ### Стек
@@ -128,7 +128,7 @@ wiki/
 - **Матчеры:** `@testing-library/jest-dom/vitest` (`toBeInTheDocument`, `toHaveTextContent`)
 - **События:** `@testing-library/user-event` (`user.click`, `user.type`)
 - **Окружение:** `jsdom`
-- **Запуск:** `npm test` (однократно), `npm run test:watch` (watch mode)
+- **Запуск:** `pnpm test` (однократно), `pnpm run test:watch` (watch mode)
 - **Конфиг:** `vitest.config.ts`, `src/test/setup.ts`
 
 ### Где лежат тесты
@@ -215,7 +215,7 @@ render(<AccountCard account={createMockAccount({ name: 'Наличные' })} on
 
 ### CI
 
-`npm test` запускается перед `npm run build` в GitHub Actions (см. `.github/workflows/deploy.yml`). Если тесты падают — деплой блокируется.
+`pnpm test` запускается перед `pnpm run build` в GitHub Actions (см. `.github/workflows/deploy.yml`). Если тесты падают — деплой блокируется.
 
 ## E2E-тестирование (Playwright)
 
@@ -223,7 +223,7 @@ render(<AccountCard account={createMockAccount({ name: 'Наличные' })} on
 
 Перед сдачей задачи, которая добавляет новую страницу, раздел приложения или сквозной сценарий (логин, CRUD), агент **обязан** написать E2E-тесты для этого сценария и убедиться, что они проходят.
 
-Запускать через `npm run test:e2e:full` — это прогоняет все тесты на localhost + запускает очистку тестовых пользователей.
+Запускать через `pnpm run test:e2e:full` — это прогоняет все тесты на localhost + запускает очистку тестовых пользователей.
 
 ### Стек
 
@@ -238,12 +238,12 @@ render(<AccountCard account={createMockAccount({ name: 'Наличные' })} on
 
 | Команда | Описание |
 |---------|----------|
-| `npm run test:e2e` | Все тесты на localhost (автозапуск `npm run dev` через `webServer`) |
-| `npm run test:e2e:prod` | Все тесты против https://money.vitalik.dev |
-| `npm run test:e2e:ui` | UI Mode (watch, time travel) |
-| `npm run test:e2e:headed` | С видимым браузером (для отладки) |
-| `npm run test:e2e:cleanup` | Удалить тестовых пользователей из Auth + Firestore |
-| `npm run test:e2e:full` | Прогнать тесты на localhost, затем очистить пользователей |
+| `pnpm run test:e2e` | Все тесты на localhost (автозапуск `pnpm run dev` через `webServer`) |
+| `pnpm run test:e2e:prod` | Все тесты против https://money.vitalik.dev |
+| `pnpm run test:e2e:ui` | UI Mode (watch, time travel) |
+| `pnpm run test:e2e:headed` | С видимым браузером (для отладки) |
+| `pnpm run test:e2e:cleanup` | Удалить тестовых пользователей из Auth + Firestore |
+| `pnpm run test:e2e:full` | Прогнать тесты на localhost, затем очистить пользователей |
 
 ### Структура
 
@@ -328,8 +328,8 @@ Firebase Auth хранит сессию в IndexedDB. Playwright не умеет
 **Команды:**
 | Команда | Описание |
 |---------|----------|
-| `npm run test:e2e:cleanup` | Удалить всех записанных пользователей |
-| `npm run test:e2e:full` | Прогнать тесты + очистка |
+| `pnpm run test:e2e:cleanup` | Удалить всех записанных пользователей |
+| `pnpm run test:e2e:full` | Прогнать тесты + очистка |
 
 **Переменные окружения:**
 - `FIREBASE_SERVICE_ACCOUNT` — полный JSON сервисного аккаунта Firebase Admin SDK (в `.env`)

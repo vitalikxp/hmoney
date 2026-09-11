@@ -5,4 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   envPrefix: ['VITE_', 'FIREBASE_'],
+  server: {
+    host: '127.0.0.1',
+  },
 })

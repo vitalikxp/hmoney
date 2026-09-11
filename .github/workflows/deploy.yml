@@ -19,11 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - run: |
           cat > .env << EOF
           FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
@@ -34,8 +35,8 @@ jobs:
           FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
           EOF
         name: Create .env from secrets
-      - run: npm test
-      - run: npm run build
+      - run: pnpm test
+      - run: pnpm run build
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
