@@ -52,3 +52,47 @@ describe('parseTransactionInput', () => {
     expect(parseTransactionInput('500')).toEqual({ amount: null, description: '500' })
   })
 })
+
+describe('parseTransactionInput: несколько позиций через запятую', () => {
+  it('суммирует позиции: 89 + 120 = 209', () => {
+    expect(parseTransactionInput('89 flash up, 120 gorilla mango')).toEqual({
+      amount: 209,
+      description: 'flash up, gorilla mango',
+    })
+  })
+
+  it('суммирует умножения в позициях', () => {
+    expect(parseTransactionInput('3*150 кофе, 2*200 пирожки')).toEqual({
+      amount: 850,
+      description: 'кофе, пирожки',
+    })
+  })
+
+  it('позиция без суммы становится описанием', () => {
+    expect(parseTransactionInput('100 кофе, чай')).toEqual({
+      amount: 100,
+      description: 'кофе, чай',
+    })
+  })
+
+  it('скобки игнорируются в каждой позиции', () => {
+    expect(parseTransactionInput('5*250 яблоки (х2), 2*200 чай (беру)')).toEqual({
+      amount: 1650,
+      description: 'яблоки, чай',
+    })
+  })
+
+  it('пустые сегменты пропускаются', () => {
+    expect(parseTransactionInput('100 кофе,, 200 чай')).toEqual({
+      amount: 300,
+      description: 'кофе, чай',
+    })
+  })
+
+  it('текст без сумм в нескольких сегментах — amount null', () => {
+    expect(parseTransactionInput('молоко, хлеб')).toEqual({
+      amount: null,
+      description: 'молоко, хлеб',
+    })
+  })
+})

@@ -28,7 +28,10 @@ export default function TransactionCard({ transaction, accountNames, envelopeNam
   const colorClass = isTransfer ? 'text-link' : transaction.type === 'expense' ? 'text-rose' : 'text-emerald'
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 hover:bg-elevated/50 transition-colors border-b border-hairline last:border-b-0">
+    <div
+      onClick={() => onEdit(transaction)}
+      className="flex items-center gap-3 px-4 py-3 hover:bg-elevated/50 transition-colors border-b border-hairline last:border-b-0 cursor-pointer"
+    >
       <div className="w-8 h-8 rounded-full bg-elevated flex items-center justify-center text-sm shrink-0 font-medium">
         {icon}
       </div>
@@ -47,13 +50,13 @@ export default function TransactionCard({ transaction, accountNames, envelopeNam
           {`${sign} ${transaction.amount.toLocaleString('ru-RU')}₽`}
         </div>
       </div>
-      <div className="flex gap-1 shrink-0 ml-2">
+      <div className="flex gap-1 shrink-0 ml-2" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={() => onEdit(transaction)}
           className="p-1.5 text-muted hover:text-ink hover:bg-elevated rounded transition-colors cursor-pointer"
           title="Редактировать"
         >
-          ✎
+          ✏️
         </button>
         <button
           onClick={() => onDelete(transaction)}

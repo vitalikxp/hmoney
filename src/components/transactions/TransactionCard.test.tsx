@@ -102,4 +102,23 @@ describe('TransactionCard', () => {
     await user.click(screen.getByTitle('Удалить'))
     expect(onDelete).toHaveBeenCalledWith(tx)
   })
+
+  it('клик по строке открывает редактирование', async () => {
+    const user = userEvent.setup()
+    const onEdit = vi.fn()
+    const tx = createMockTransaction({ category: 'Продукты' })
+    renderCard(tx, { onEdit, onDelete: vi.fn() })
+
+    await user.click(screen.getByText('Продукты'))
+    expect(onEdit).toHaveBeenCalledWith(tx)
+  })
+
+  it('клик по кнопке удаления не открывает редактирование', async () => {
+    const user = userEvent.setup()
+    const onEdit = vi.fn()
+    renderCard(createMockTransaction(), { onEdit, onDelete: vi.fn() })
+
+    await user.click(screen.getByTitle('Удалить'))
+    expect(onEdit).not.toHaveBeenCalled()
+  })
 })

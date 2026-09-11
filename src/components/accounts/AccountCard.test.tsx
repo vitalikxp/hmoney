@@ -74,6 +74,18 @@ describe('AccountCard', () => {
     expect(onEdit).toHaveBeenCalledWith(account)
   })
 
+  it('calls onEdit when row is clicked', () => {
+    const { account, onEdit } = renderCard()
+    screen.getByText(account.name).closest('div.flex')?.dispatchEvent(new Event('click', { bubbles: true }))
+    expect(onEdit).toHaveBeenCalledWith(account)
+  })
+
+  it('does not call onEdit when delete button clicked', () => {
+    const { onEdit } = renderCard()
+    screen.getByTitle('Удалить').click()
+    expect(onEdit).not.toHaveBeenCalled()
+  })
+
   it('calls onDelete when delete button clicked', () => {
     const { account, onDelete } = renderCard()
     const btn = screen.getByTitle('Удалить')

@@ -15,7 +15,10 @@ export default function AccountCard({ account, onEdit, onDelete }: Props) {
   const avail = availableBalance(account)
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 hover:bg-elevated/50 transition-colors border-b border-hairline last:border-b-0">
+    <div
+      onClick={() => onEdit(account)}
+      className="flex items-center gap-3 px-4 py-3 hover:bg-elevated/50 transition-colors border-b border-hairline last:border-b-0 cursor-pointer"
+    >
       <div className="w-8 h-8 rounded-full bg-elevated flex items-center justify-center text-sm shrink-0">
         {account.icon ?? '💳'}
       </div>
@@ -37,13 +40,13 @@ export default function AccountCard({ account, onEdit, onDelete }: Props) {
           {account.balance.toLocaleString('ru-RU')}₽
         </div>
       </div>
-      <div className="flex gap-1 shrink-0 ml-2">
+      <div className="flex gap-1 shrink-0 ml-2" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={() => onEdit(account)}
           className="p-1.5 text-muted hover:text-ink hover:bg-elevated rounded transition-colors cursor-pointer"
           title="Редактировать"
         >
-          ✎
+          ✏️
         </button>
         <button
           onClick={() => onDelete(account)}

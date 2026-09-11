@@ -63,4 +63,14 @@ describe('EnvelopeCard', () => {
     btn.click()
     expect(onDelete).toHaveBeenCalledWith(envelope)
   })
+
+  it('calls onEdit when row is clicked', async () => {
+    const userEvent = (await import('@testing-library/user-event')).default
+    const user = userEvent.setup()
+    const onEdit = vi.fn()
+    render(<EnvelopeCard envelope={createMockEnvelope({ name: 'Резервы' })} onEdit={onEdit} onDelete={vi.fn()} />)
+
+    await user.click(screen.getByText('Резервы'))
+    expect(onEdit).toHaveBeenCalledWith(createMockEnvelope({ name: 'Резервы' }))
+  })
 })

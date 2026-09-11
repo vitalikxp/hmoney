@@ -9,7 +9,10 @@ interface Props {
 
 export default function EnvelopeCard({ envelope, onEdit, onDelete }: Props) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3 hover:bg-elevated/50 transition-colors border-b border-hairline last:border-b-0">
+    <div
+      onClick={() => onEdit(envelope)}
+      className="flex items-center gap-3 px-4 py-3 hover:bg-elevated/50 transition-colors border-b border-hairline last:border-b-0 cursor-pointer"
+    >
       <div className="w-8 h-8 rounded-full bg-elevated flex items-center justify-center text-sm shrink-0">
         {envelope.icon ?? DEFAULT_ICON}
       </div>
@@ -37,7 +40,7 @@ export default function EnvelopeCard({ envelope, onEdit, onDelete }: Props) {
           </div>
         )}
       </div>
-      <div className="flex gap-1 shrink-0 ml-2">
+      <div className="flex gap-1 shrink-0 ml-2" onClick={(e) => e.stopPropagation()}>
         {!envelope.isBuiltIn && (
           <>
             <button
@@ -45,7 +48,7 @@ export default function EnvelopeCard({ envelope, onEdit, onDelete }: Props) {
               className="p-1.5 text-muted hover:text-ink hover:bg-elevated rounded transition-colors cursor-pointer"
               title="Редактировать"
             >
-              ✎
+              ✏️
             </button>
             <button
               onClick={() => onDelete(envelope)}

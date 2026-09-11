@@ -95,7 +95,7 @@ export default function CategoriesModal({ transactions, onClose }: Props) {
                       className="p-1 text-muted hover:text-ink hover:bg-elevated rounded transition-colors cursor-pointer"
                       title="Переименовать"
                     >
-                      ✎
+                      ✏️
                     </button>
                   </div>
                 )}
